@@ -1,0 +1,1 @@
+// Stub for Domain/Entities/Patient.cs
