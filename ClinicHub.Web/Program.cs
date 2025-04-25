@@ -8,11 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+
+
 builder.Services.AddHttpClient("ClinicHubAPI", client => 
 {
-    client.BaseAddress = new Uri("https://localhost:5001/"); // URL вашего API
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]);
 });
-
 
 var app = builder.Build();
 

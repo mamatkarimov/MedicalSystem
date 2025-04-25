@@ -1,0 +1,24 @@
+@using MudBlazor
+@using MudBlazor.Icons
+
+<MudPaper Elevation="0" Class="d-flex flex-row pa-2" Style="width:100%;background:var(--mud-palette-background);">
+    <MudTabs @bind-ActivePanelIndex="_activeIndex" Position="Position.Bottom" Centered="true" Class="w-100">
+        <MudTab Icon="@Icons.Material.Filled.Home" Text="Главная" Href="/"/>
+        <MudTab Icon="@Icons.Material.Filled.People" Text="Пациенты" Href="/patients"/>
+        <MudTab Icon="@Icons.Material.Filled.CalendarToday" Text="Приемы" Href="/appointments"/>
+        <MudTab Icon="@Icons.Material.Filled.Menu" Text="Еще" OnClick="@(() => _drawerOpen = true)"/>
+    </MudTabs>
+
+    <MudDrawer @bind-Open="_drawerOpen" Anchor="Anchor.Bottom" Elevation="25">
+        <MudList>
+            <MudListItem Text="Лаборатория" Icon="@Icons.Material.Filled.Science" Href="/lab"/>
+            <MudListItem Text="Стационар" Icon="@Icons.Material.Filled.LocalHospital" Href="/hospital"/>
+            <MudListItem Text="Настройки" Icon="@Icons.Material.Filled.Settings" Href="/settings"/>
+        </MudList>
+    </MudDrawer>
+</MudPaper>
+
+@code {
+    private int _activeIndex = 0;
+    private bool _drawerOpen = false;
+}

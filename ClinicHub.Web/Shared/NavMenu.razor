@@ -1,39 +1,93 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">ClinicHub.Web</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@using ClinicHub.Web.Shared
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<MudPaper Elevation="4" Class="d-flex flex-column pa-4" Style="height: 100%; background: var(--mud-palette-dark); color: var(--mud-palette-dark-text);">
+    
+    <!-- Логотип и заголовок -->
+    <div class="d-flex align-center mb-6">
+        <MudAvatar Image="/images/logo.png" Size="40" Class="mr-2"/>
+        <MudText Typo="Typo.h6" Class="ml-2 white--text">ClinicHub</MudText>
+    </div>
+
+    <!-- Основное меню -->
+    <MudList @bind-SelectedIndex="_selectedIndex" Style="flex-grow: 1;">
+
+        <!-- Пациенты -->
+        <MudNavLink Href="/patients" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">
+            <MudText>Пациенты</MudText>
+            <MudBadge Class="ml-2" Color="Color.Warning" BadgeContent="@_pendingPatientsCount"/>
+        </MudNavLink>
+
+        <!-- Приемы -->
+        <MudNavLink Href="/appointments" Icon="@Icons.Material.Filled.CalendarToday">
+            <MudText>Приемы</MudText>
+            <MudBadge Class="ml-2" Color="Color.Error" BadgeContent="@_todayAppointments"/>
+        </MudNavLink>
+
+        <!-- Лаборатория -->
+        <MudNavLink Href="/lab" Icon="@Icons.Material.Filled.Science">
+            <MudText>Лаборатория</MudText>
+        </MudNavLink>
+
+        <!-- Стационар -->
+        <MudNavLink Href="/hospital" Icon="@Icons.Material.Filled.LocalHospital">
+            <MudText>Стационар</MudText>
+        </MudNavLink>
+
+        <!-- Администрирование -->
+        @if (_isAdmin)
+        {
+            <MudNavLink Href="/admin" Icon="@Icons.Material.Filled.AdminPanelSettings">
+                <MudText>Администрирование</MudText>
+            </MudNavLink>
+        }
+
+    </MudList>
+
+    <!-- Нижняя часть меню -->
+    <div class="mt-auto">
+        <!-- Переключение темы -->
+        <MudSwitch @bind-Checked="_isDarkMode" Color="Color.Primary" Class="mt-2">
+            <MudText Class="ml-2">Темная тема</MudText>
+        </MudSwitch>
+
+        <!-- Выход -->
+        <MudNavLink Href="/logout" Icon="@Icons.Material.Filled.Logout" Class="mt-4">
+            <MudText>Выход</MudText>
+        </MudNavLink>
+    </div>
+
+</MudPaper>
 
 @code {
-    private bool collapseNavMenu = true;
+    private int _selectedIndex = 0;
+    private bool _isDarkMode = true;
+    private bool _isAdmin = false;
+    private int _pendingPatientsCount = 0;
+    private int _todayAppointments = 0;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
+    protected override async Task OnInitializedAsync()
     {
-        collapseNavMenu = !collapseNavMenu;
+        // Загрузка данных при инициализации
+        await LoadData();
+        
+        // Проверка прав администратора (пример)
+        _isAdmin = await CheckAdminRole();
+    }
+
+    private async Task LoadData()
+    {
+        // Здесь можно загрузить данные для бейджей
+        // Пример:
+        // _pendingPatientsCount = await PatientService.GetPendingCountAsync();
+        // _todayAppointments = await AppointmentService.GetTodayCountAsync();
+    }
+
+    private async Task<bool> CheckAdminRole()
+    {
+        // Реализация проверки роли
+        // return await AuthService.IsUserAdmin();
+        return false; // временно
     }
 }
