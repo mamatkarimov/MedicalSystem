@@ -1,11 +1,10 @@
 using MedicalSystem.Domain.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MedicalSystem.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace MedicalSystem.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 

@@ -1,6 +1,0 @@
-
-namespace MedicalSystem.Domain.Entities
-{
-   
-
-}
