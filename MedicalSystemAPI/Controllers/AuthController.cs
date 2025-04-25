@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MedicalSystemAPI.Models;
-using MedicalSystemAPI.Models.DTOs;
 
 namespace MedicalSystemAPI.Controllers
 {
@@ -13,6 +12,9 @@ namespace MedicalSystemAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IAuthService _authService;
+    private readonly IMapper _mapper;
+    
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;

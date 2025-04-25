@@ -1,5 +1,5 @@
 @using MudBlazor
-@using MudBlazor.Icons
+@using static MudBlazor.Icons
 
 <MudPaper Elevation="0" Class="d-flex flex-row pa-2" Style="width:100%;background:var(--mud-palette-background);">
     <MudTabs @bind-ActivePanelIndex="_activeIndex" Position="Position.Bottom" Centered="true" Class="w-100">
@@ -11,9 +11,14 @@
 
     <MudDrawer @bind-Open="_drawerOpen" Anchor="Anchor.Bottom" Elevation="25">
         <MudList>
-            <MudListItem Text="Лаборатория" Icon="@Icons.Material.Filled.Science" Href="/lab"/>
-            <MudListItem Text="Стационар" Icon="@Icons.Material.Filled.LocalHospital" Href="/hospital"/>
-            <MudListItem Text="Настройки" Icon="@Icons.Material.Filled.Settings" Href="/settings"/>
+            <MudListItem Href="/lab">
+                <MudIcon Icon="@Icons.Material.Filled.Science" Class="mr-3"/>
+                <MudText>Лаборатория</MudText>
+            </MudListItem>
+            <MudListItem Href="/hospital">
+                <MudIcon Icon="@Icons.Material.Filled.LocalHospital" Class="mr-3"/>
+                <MudText>Стационар</MudText>
+            </MudListItem>
         </MudList>
     </MudDrawer>
 </MudPaper>

@@ -19,4 +19,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MedicalSystem.Domain\MedicalSystem.Domain.csproj" />
+    <ProjectReference Include="..\MedicalSystem.Infrastructure\MedicalSystem.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
