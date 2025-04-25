@@ -1,9 +1,8 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MedicalSystemAPI.Models.DTOs
+namespace MedicalSystem.Application.DTOs
 {
-    
-
     public class AuthResponse
     {
         public string Token { get; set; }
