@@ -4,7 +4,8 @@ namespace MedicalSystemAPI.Models.DTOs
 {
     public class LabTestType
 {
-    public int TestTypeID { get; set; }
+    [Key] 
+        public int TestTypeID { get; set; }
     
     [Required]
     public string TestName { get; set; }
@@ -20,6 +21,7 @@ namespace MedicalSystemAPI.Models.DTOs
 
 public class LabOrder
 {
+    [Key] 
     public int OrderID { get; set; }
     
     [Required]
@@ -46,6 +48,8 @@ public class LabOrder
 
 public class LabOrderDetail
 {
+
+[Key] 
     public int OrderDetailID { get; set; }
     
     [Required]

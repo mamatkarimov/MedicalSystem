@@ -2,8 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MedicalSystemAPI.Models.DTOs
 {
+    
     public class Service
 {
+    [Key]
     public int ServiceID { get; set; }
     
     [Required]
@@ -21,6 +23,7 @@ namespace MedicalSystemAPI.Models.DTOs
 
 public class Invoice
 {
+    [Key]
     public int InvoiceID { get; set; }
     
     [Required]
@@ -52,6 +55,7 @@ public class Invoice
 
 public class InvoiceDetail
 {
+    [Key]
     public int InvoiceDetailID { get; set; }
     
     [Required]
@@ -76,6 +80,7 @@ public class InvoiceDetail
 
 public class Payment
 {
+    [Key]
     public int PaymentID { get; set; }
     
     [Required]

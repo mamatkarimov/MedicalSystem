@@ -4,6 +4,8 @@ namespace MedicalSystemAPI.Models.DTOs
 {
 public class Department
 {
+
+[Key]
     public int DepartmentID { get; set; }
     
     [Required]
@@ -19,6 +21,7 @@ public class Department
 
 public class Ward
 {
+    [Key]
     public int WardID { get; set; }
     
     [Required]
@@ -40,6 +43,8 @@ public class Ward
 
 public class Bed
 {
+
+[Key]
     public int BedID { get; set; }
     
     [Required]
@@ -58,6 +63,7 @@ public class Bed
 
 public class Hospitalization
 {
+    [Key]
     public int HospitalizationID { get; set; }
     
     [Required]
@@ -87,6 +93,8 @@ public class Hospitalization
 
 public class NurseRound
 {
+
+[Key]
     public int RoundID { get; set; }
     
     [Required]
@@ -109,7 +117,8 @@ public class NurseRound
 
 public class PatientDiet
 {
-    public int DietID { get; set; }
+
+[Key]    public int DietID { get; set; }
     
     [Required]
     public int PatientID { get; set; }

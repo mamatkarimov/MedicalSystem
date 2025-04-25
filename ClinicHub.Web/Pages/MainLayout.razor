@@ -1,0 +1,22 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+@if (IsMobile)
+{
+    <MobileNav/>
+}
+else
+{
+    <DesktopNav/>
+}
+
+<MudMainContent>
+    @Body
+</MudMainContent>
+
+@code {
+    private bool IsMobile => /* Логика определения мобильного устройства */;
+}

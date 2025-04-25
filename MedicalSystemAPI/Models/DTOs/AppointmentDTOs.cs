@@ -4,7 +4,8 @@ namespace MedicalSystemAPI.Models.DTOs
 {
     public class Appointment
 {
-    public int AppointmentID { get; set; }
+    [Key]
+        public int AppointmentID { get; set; }
     
     [Required]
     public int PatientID { get; set; }

@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 namespace MedicalSystemAPI.Models.DTOs
 {
-    public class PatientDocumentDto
+    public class PatientDocument
     {
+        [Key]
         public int DocumentID { get; set; }
+        [Required]
         public int PatientID { get; set; }
         
         [Required]
@@ -15,8 +17,10 @@ namespace MedicalSystemAPI.Models.DTOs
         public DateTime? IssueDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public string IssuedBy { get; set; }
-    }
 
+        public Patient Patient { get; set; }
+    }
+   
     public class AddPatientDocumentRequest
     {
         [Required]

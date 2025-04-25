@@ -4,6 +4,7 @@ namespace MedicalSystemAPI.Models.DTOs
 {
 public class MedicalHistory
 {
+    [Key]
     public int HistoryID { get; set; }
     
     [Required]
@@ -28,6 +29,8 @@ public class MedicalHistory
 
 public class Prescription
 {
+
+[Key]
     public int PrescriptionID { get; set; }
     
     [Required]

@@ -1,0 +1,22 @@
+@page "/patients"
+@inject HttpClient Http
+
+<MudContainer>
+    <MudList>
+        @foreach (var patient in patients)
+        {
+            <MudListItem Href="@($"/patient/{patient.PatientID}")">
+                @patient.FullName
+            </MudListItem>
+        }
+    </MudList>
+</MudContainer>
+
+@code {
+    private Patient[] patients;
+
+    protected override async Task OnInitializedAsync()
+    {
+        patients = await Http.GetFromJsonAsync<Patient[]>("api/patients");
+    }
+}

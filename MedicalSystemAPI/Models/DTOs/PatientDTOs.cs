@@ -4,7 +4,8 @@ namespace MedicalSystemAPI.Models.DTOs
 {
    public class Patient
 {
-    public int PatientID { get; set; }
+    [Key]
+        public int PatientID { get; set; }
     
     [Required]
     public string FirstName { get; set; }
