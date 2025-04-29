@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register token store
+builder.Services.AddScoped<ITokenStore, SqlTokenStore>();
 
 builder.Services.AddIdentityServer()
     .AddDeveloperSigningCredential()

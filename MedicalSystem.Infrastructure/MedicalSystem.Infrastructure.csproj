@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Compile Remove="Data\Repositories\ITokenStore.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
@@ -8,6 +12,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MedicalSystem.Domain\MedicalSystem.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Data\Repositories\ITokenStore.cs" />
   </ItemGroup>
 
   <PropertyGroup>
