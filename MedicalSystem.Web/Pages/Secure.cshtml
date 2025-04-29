@@ -1,0 +1,62 @@
+﻿@page "/secure"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authentication
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+<PageTitle>Secure Page</PageTitle>
+
+<h2>Secure Page</h2>
+
+<h3>User Claims</h3>
+<dl>
+    @foreach (var claim in User.Claims)
+    {
+        <dt>@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
+</dl>
+
+<h3>Tokens</h3>
+<dl>
+    <dt>access token</dt>
+    <dd>@await ViewContext.HttpContext.GetTokenAsync("access_token")</dd>
+
+    <dt>refresh token</dt>
+    <dd>@await ViewContext.HttpContext.GetTokenAsync("refresh_token")</dd>
+</dl>
+
+<button onclick ="CallApi" class="btn btn-primary">Call API</button>
+<button onclick ="Logout" class="btn btn-danger">Logout</button>
+
+@* @code {
+    private string? accessToken;
+    private string? refreshToken;
+    private AuthenticationState? context;
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        accessToken = await TokenProvider.GetTokenAsync("access_token");
+        refreshToken = await TokenProvider.GetTokenAsync("refresh_token");
+    }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    [Inject]
+    private IAccessTokenProvider TokenProvider { get; set; }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+
+    private async Task CallApi()
+    {
+        // Implement API call logic here
+    }
+
+    private async Task Logout()
+    {
+        Navigation.NavigateTo("/logout", forceLoad: true);
+    }
+} *@

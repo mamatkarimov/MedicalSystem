@@ -6,7 +6,10 @@
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
-@if (IsMobile)
+
+<div class="page">
+    <div class="sidebar">
+        @if (IsMobile)
 {
     <MobileNav/>
 }
@@ -14,9 +17,28 @@ else
 {
     <DesktopNav/>
 }
+    </div>
 
-<div class="@(IsMobile ? "mobile-content" : "desktop-content")">
-    @Body
+    <main>
+        <div class="top-row px-4">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <AuthorizeView>
+                <Authorized>
+                    <a href="/secure">Secure Page</a>
+                    <a href="/logout">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            <div class="@(IsMobile ? "mobile-content" : "desktop-content")">
+                @Body
+            </div>
+        </article>
+    </main>
 </div>
 
 <style>

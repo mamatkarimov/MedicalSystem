@@ -1,12 +1,12 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
 @code {
-    private bool isMobile;
+    private bool isMobile = false;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            isMobile = await JSRuntime.InvokeAsync<bool>("isMobile");
+           // isMobile = await JSRuntime.InvokeAsync<bool>("isMobile");
         }
     }
 }
