@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MedicalSystem.API.Models.Requests
+namespace MedicalSystem.Application.Models.Requests
 {
     public class CreateInvoiceRequest
 {

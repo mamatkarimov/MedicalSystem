@@ -1,9 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MedicalSystem.API.Models.Requests
+namespace MedicalSystem.Application.Models.Requests
 {
-    public class UpdatePatientDocumentRequest
+    public class AddPatientDocumentRequest
     {
+        [Required]
+        public int PatientID { get; set; }
+        
         [Required]
         public string DocumentType { get; set; }
         

@@ -69,7 +69,7 @@ public class PaymentsController : ControllerBase
 
     [Authorize(Roles = "Admin,Accountant,Cashier")]
     [HttpPost("invoices")]
-    public async Task<ActionResult<Invoice>> CreateInvoice(Models.Requests.CreateInvoiceRequest request)
+    public async Task<ActionResult<Invoice>> CreateInvoice(Application.Models.Requests.CreateInvoiceRequest request)
     {
         var patient = await _context.Patients.FindAsync(request.PatientID);
         if (patient == null || !patient.IsActive)

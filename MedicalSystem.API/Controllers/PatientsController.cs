@@ -1,4 +1,4 @@
-using MedicalSystem.API.Models.Requests;
+using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -41,18 +41,22 @@ public class PatientsController : ControllerBase
         }
 
         return patient;
-    }
+    }       
 
-    [AllowAnonymous]
+        [AllowAnonymous]
     [HttpPost("self-register")]
-    public async Task<ActionResult<Patient>> SelfRegister(RegisterPatientRequest request)
+    public async Task<ActionResult<ApiResponse<Patient>>> SelfRegister(RegisterPatientRequest request)
     {
         // Validate model
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        //if (!ModelState.IsValid)
+        //    return BadRequest(ModelState);
 
-        // Create patient
-        var patient = new Patient
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<PatientDto>(false, "Invalid data", ModelState));
+
+
+            // Create patient
+            var patient = new Patient
         {
             FirstName = request.FirstName,
             LastName = request.LastName,

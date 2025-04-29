@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MedicalSystem.Application.DTOs
+namespace MedicalSystem.Application.Models.Responses
 {
     public class AuthResponse
     {

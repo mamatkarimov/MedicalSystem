@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MedicalSystem.API.Migrations
+namespace MedicalSystem.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250425063611_InitialCreate")]
