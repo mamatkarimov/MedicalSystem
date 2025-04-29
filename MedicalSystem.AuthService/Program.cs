@@ -1,8 +1,5 @@
 using MedicalSystem.AuthService;
-using IdentityServer4;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using MedicalSystem.AuthService.Config;
+using MedicalSystem.AuthService.Models;
 using MedicalSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,17 +10,15 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-// Add services to the container.
 builder.Services.AddIdentityServer()
     .AddDeveloperSigningCredential()
-    .AddInMemoryIdentityResources(Config.IdentityResources)
-    .AddInMemoryApiScopes(Config.ApiScopes)
-    .AddInMemoryClients(Config.Clients)
-    .AddTestUsers(TestUsers.Users);
-
-builder.Services.AddControllersWithViews();
+    .AddInMemoryIdentityResources(Config.GetIdentityResources())
+    .AddInMemoryApiScopes(Config.GetApiScopes())
+    .AddInMemoryClients(Config.GetClients(builder.Configuration))
+    .AddAspNetIdentity<ApplicationUser>(); // If using ASP.NET Identity
 
 var app = builder.Build();
+app.UseIdentityServer();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,3 +1,5 @@
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using MudBlazor.Services;
@@ -9,9 +11,20 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 
-builder.Services.AddHttpClient("ClinicHubAPI", client => 
+builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]);
+})
+.AddUserAccessTokenHandler();
+
+builder.Services.AddAccessTokenManagement(options =>
+{
+    options.Client.Clients.Add("auth", new ClientCredentialsTokenRequest
+    {
+        Address = $"{builder.Configuration["Auth:Authority"]}/connect/token",
+        ClientId = "clinicweb",
+        ClientSecret = builder.Configuration["Auth:ClientSecret"]
+    });
 });
 
 builder.Services.AddAuthentication(options =>
@@ -19,20 +32,33 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
-    .AddCookie("Cookies")
-    .AddOpenIdConnect("oidc", options =>
-    {
-        options.Authority = "https://localhost:7039"; 
-        options.ClientId = "mvc";
-        options.ClientSecret = "secret";
-        options.ResponseType = "code";
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Cookie.Name = "clinicweb.auth";
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+})
+.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+{
+    options.Authority = builder.Configuration["Auth:Authority"];
+    options.ClientId = "clinicweb";
+    options.ClientSecret = builder.Configuration["Auth:ClientSecret"];
+    options.ResponseType = "code";
 
-        options.SaveTokens = true;
-        options.GetClaimsFromUserInfoEndpoint = true;
+    options.Scope.Clear();
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("email");
+    options.Scope.Add("roles");
+    options.Scope.Add("permissions");
+    options.Scope.Add("clinicapi");
+    options.Scope.Add("offline_access");
 
-        options.Scope.Add("api1");
-        options.Scope.Add("offline_access");
-    });
+    options.ClaimActions.MapJsonKey("role", "role");
+    options.ClaimActions.MapJsonKey("permission", "permission");
+
+    options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+});
 
 
 
