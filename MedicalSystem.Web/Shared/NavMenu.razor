@@ -3,15 +3,15 @@
 @inject IJSRuntime JSRuntime
 
 <MudPaper Elevation="4" Class="d-flex flex-column pa-4" Style="height: 100%; background: var(--mud-palette-dark); color: var(--mud-palette-dark-text);">
-    
+
     <!-- Логотип и заголовок -->
     <div class="d-flex align-center mb-6">
         @* <MudAvatar Image="/images/logo.png" Size="40" Class="mr-2"/> *@
         <MudText Typo="Typo.h6" Class="ml-2 white--text">ClinicHub</MudText>
     </div>
-@* 
+    
     <!-- Основное меню -->
-    <MudList @bind-SelectedIndex="_selectedIndex" Style="flex-grow: 1;">
+    <MudList @bind-SelectedIndex="_selectedIndex" Style="flex-grow: 1;" T="string">
 
         <!-- Пациенты -->
         <MudNavLink Href="/patients" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">
@@ -48,7 +48,7 @@
     <!-- Нижняя часть меню -->
     <div class="mt-auto">
         <!-- Переключение темы -->
-        <MudSwitch @bind-Checked="_isDarkMode" Color="Color.Primary" Class="mt-2">
+        <MudSwitch @bind-Checked="_isDarkMode" Color="Color.Primary" Class="mt-2" T="bool">
             <MudText Class="ml-2">Темная тема</MudText>
         </MudSwitch>
 
@@ -56,7 +56,7 @@
         <MudNavLink Href="/logout" Icon="@Icons.Material.Filled.Logout" Class="mt-4">
             <MudText>Выход</MudText>
         </MudNavLink>
-    </div> *@
+    </div> 
 
 </MudPaper>
 
@@ -71,23 +71,23 @@
     {
         // Загрузка данных при инициализации
         await LoadData();
-        
+
         // Проверка прав администратора (пример)
         _isAdmin = await CheckAdminRole();
     }
 
     private async Task LoadData()
     {
-        // Здесь можно загрузить данные для бейджей
-        // Пример:
-        // _pendingPatientsCount = await PatientService.GetPendingCountAsync();
-        // _todayAppointments = await AppointmentService.GetTodayCountAsync();
+    //Здесь можно загрузить данные для бейджей
+    //Пример:
+    // _pendingPatientsCount = await PatientService.GetPendingCountAsync();
+    // _todayAppointments = await AppointmentService.GetTodayCountAsync();
     }
 
     private async Task<bool> CheckAdminRole()
     {
         // Реализация проверки роли
-        // return await AuthService.IsUserAdmin();
+     //    return await AuthService.IsUserAdmin();
         return false; // временно
     }
 }

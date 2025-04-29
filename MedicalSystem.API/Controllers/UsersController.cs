@@ -1,14 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using MedicalSystem.API.Models.Requests;
+using MedicalSystem.Infrastructure.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using MedicalSystem.API.Models;
-using MedicalSystem.API.Models.DTOs;
-using Microsoft.AspNetCore.Authorization;
-using MedicalSystem.API.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace MedicalSystem.API.Controllers
 {

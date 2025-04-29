@@ -3,11 +3,11 @@
 
 <MudPaper Elevation="1" Class="d-flex flex-column pa-4" Style="height:100%;width:250px;background:var(--mud-palette-background);">
     <div class="d-flex align-center mb-6">
-       @*  <MudAvatar Image="/images/logo.png" Size="40" Class="mr-2"/> *@
+        <MudAvatar Image="/images/logo.png" Size = "Size.Small" Class="mr-2"/>
         <MudText Typo="Typo.h6">ClinicHub</MudText>
     </div>
 
-   @*  <MudList>
+    <MudList T="string">
         <MudNavLink Href="/" Match="NavLinkMatch.All">
             <MudIcon Icon="@Icons.Material.Filled.Home" Class="mr-3"/>
             <MudText>Главная</MudText>
@@ -16,7 +16,7 @@
             <MudIcon Icon="@Icons.Material.Filled.People" Class="mr-3"/>
             <MudText>Пациенты</MudText>
         </MudNavLink>
-    </MudList> *@
+    </MudList>
 </MudPaper>
 
 @code {

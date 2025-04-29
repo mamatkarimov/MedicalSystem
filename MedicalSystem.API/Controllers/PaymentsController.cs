@@ -1,14 +1,10 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using MedicalSystem.API.Models;
-using MedicalSystem.API.Models.DTOs;
+using MedicalSystem.API.Models.Requests;
+using MedicalSystem.Domain.Entities;
+using MedicalSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
-using MedicalSystem.API.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace MedicalSystem.API.Controllers
 {
@@ -73,7 +69,7 @@ public class PaymentsController : ControllerBase
 
     [Authorize(Roles = "Admin,Accountant,Cashier")]
     [HttpPost("invoices")]
-    public async Task<ActionResult<Invoice>> CreateInvoice(CreateInvoiceRequest request)
+    public async Task<ActionResult<Invoice>> CreateInvoice(Models.Requests.CreateInvoiceRequest request)
     {
         var patient = await _context.Patients.FindAsync(request.PatientID);
         if (patient == null || !patient.IsActive)

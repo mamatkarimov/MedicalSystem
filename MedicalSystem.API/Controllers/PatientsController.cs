@@ -1,13 +1,9 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using MedicalSystem.API.Models.Requests;
+using MedicalSystem.Domain.Entities;
+using MedicalSystem.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using MedicalSystem.API.Models;
-using MedicalSystem.API.Models.DTOs;
-using Microsoft.AspNetCore.Authorization;
-using MedicalSystem.API.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedicalSystem.API.Controllers
@@ -18,9 +14,9 @@ namespace MedicalSystem.API.Controllers
 public class PatientsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<MedicalSystem.Infrastructure.Identity.ApplicationUser> _userManager;
 
-    public PatientsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public PatientsController(ApplicationDbContext context, UserManager<MedicalSystem.Infrastructure.Identity.ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;
@@ -76,7 +72,7 @@ public class PatientsController : ControllerBase
         // If credentials provided, create user account
         if (!string.IsNullOrEmpty(request.Username) && !string.IsNullOrEmpty(request.Password))
         {
-            var user = new ApplicationUser
+            var user = new MedicalSystem.Infrastructure.Identity.ApplicationUser
             {
                 UserName = request.Username,
                 Email = request.Email,

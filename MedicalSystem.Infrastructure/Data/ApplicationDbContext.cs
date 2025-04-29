@@ -1,10 +1,12 @@
 using MedicalSystem.Domain.Entities;
-using MedicalSystem.Infrastructure.Identity;
+using MedicalSystem.Infrastructure.Data.Configurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ApplicationUser = MedicalSystem.Infrastructure.Identity.ApplicationUser;
 
 namespace MedicalSystem.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -43,7 +45,9 @@ namespace MedicalSystem.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            //new PatientConfiguration().Configure(modelBuilder.Entity<Blog>());
             builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+            builder.ApplyConfigurationsFromAssembly(typeof(PatientConfiguration).Assembly);
 
             // Configure relationships and constraints
 
@@ -67,11 +71,11 @@ namespace MedicalSystem.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Appointment relationships
-            builder.Entity<Appointment>()
-                .HasOne(a => a.Doctor)
-                .WithMany()
-                .HasForeignKey(a => a.DoctorID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<Appointment>()
+            //    .HasOne(a => a.Doctor)
+            //    .WithMany()
+            //    .HasForeignKey(a => a.DoctorID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Appointment>()
                 .HasMany(a => a.MedicalHistories)
@@ -80,25 +84,25 @@ namespace MedicalSystem.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Medical History relationships
-            builder.Entity<MedicalHistory>()
-                .HasOne(mh => mh.RecordedBy)
-                .WithMany()
-                .HasForeignKey(mh => mh.RecordedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<MedicalHistory>()
+            //    .HasOne(mh => mh.RecordedBy)
+            //    .WithMany()
+            //    .HasForeignKey(mh => mh.RecordedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // Prescription relationships
-            builder.Entity<Prescription>()
-                .HasOne(p => p.PrescribedBy)
-                .WithMany()
-                .HasForeignKey(p => p.PrescribedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<Prescription>()
+            //    .HasOne(p => p.PrescribedBy)
+            //    .WithMany()
+            //    .HasForeignKey(p => p.PrescribedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // Laboratory relationships
-            builder.Entity<LabOrder>()
-                .HasOne(lo => lo.OrderedBy)
-                .WithMany()
-                .HasForeignKey(lo => lo.OrderedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<LabOrder>()
+            //    .HasOne(lo => lo.OrderedBy)
+            //    .WithMany()
+            //    .HasForeignKey(lo => lo.OrderedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<LabOrder>()
                 .HasMany(lo => lo.LabOrderDetails)
@@ -106,11 +110,11 @@ namespace MedicalSystem.Infrastructure.Data
                 .HasForeignKey(lod => lod.OrderID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<LabOrderDetail>()
-                .HasOne(lod => lod.PerformedBy)
-                .WithMany()
-                .HasForeignKey(lod => lod.PerformedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<LabOrderDetail>()
+            //    .HasOne(lod => lod.PerformedBy)
+            //    .WithMany()
+            //    .HasForeignKey(lod => lod.PerformedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<LabOrderDetail>()
                 .HasOne(lod => lod.TestType)
@@ -119,24 +123,24 @@ namespace MedicalSystem.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Instrumental Studies relationships
-            builder.Entity<InstrumentalStudy>()
-                .HasOne(isu => isu.OrderedBy)
-                .WithMany()
-                .HasForeignKey(isu => isu.OrderedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<InstrumentalStudy>()
+            //    .HasOne(isu => isu.OrderedBy)
+            //    .WithMany()
+            //    .HasForeignKey(isu => isu.OrderedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<InstrumentalStudy>()
-                .HasOne(isu => isu.PerformedBy)
-                .WithMany()
-                .HasForeignKey(isu => isu.PerformedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<InstrumentalStudy>()
+            //    .HasOne(isu => isu.PerformedBy)
+            //    .WithMany()
+            //    .HasForeignKey(isu => isu.PerformedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // Stationary relationships
-            builder.Entity<Department>()
-                .HasOne(d => d.HeadDoctor)
-                .WithMany()
-                .HasForeignKey(d => d.HeadDoctorID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<Department>()
+            //    .HasOne(d => d.HeadDoctor)
+            //    .WithMany()
+            //    .HasForeignKey(d => d.HeadDoctorID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Ward>()
                 .HasOne(w => w.Department)
@@ -156,17 +160,17 @@ namespace MedicalSystem.Infrastructure.Data
                 .HasForeignKey(h => h.BedID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Hospitalization>()
-                .HasOne(h => h.AttendingDoctor)
-                .WithMany()
-                .HasForeignKey(h => h.AttendingDoctorID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<Hospitalization>()
+            //    .HasOne(h => h.AttendingDoctor)
+            //    .WithMany()
+            //    .HasForeignKey(h => h.AttendingDoctorID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<NurseRound>()
-                .HasOne(nr => nr.Nurse)
-                .WithMany()
-                .HasForeignKey(nr => nr.NurseID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<NurseRound>()
+            //    .HasOne(nr => nr.Nurse)
+            //    .WithMany()
+            //    .HasForeignKey(nr => nr.NurseID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<PatientDiet>()
                 .HasOne(pd => pd.Hospitalization)
@@ -175,11 +179,11 @@ namespace MedicalSystem.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Payments relationships
-            builder.Entity<Invoice>()
-                .HasOne(i => i.CreatedBy)
-                .WithMany()
-                .HasForeignKey(i => i.CreatedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<Invoice>()
+            //    .HasOne(i => i.CreatedBy)
+            //    .WithMany()
+            //    .HasForeignKey(i => i.CreatedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Invoice>()
                 .HasMany(i => i.InvoiceDetails)
@@ -199,11 +203,11 @@ namespace MedicalSystem.Infrastructure.Data
                 .HasForeignKey(id => id.ServiceID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Payment>()
-                .HasOne(p => p.ReceivedBy)
-                .WithMany()
-                .HasForeignKey(p => p.ReceivedByID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<Payment>()
+            //    .HasOne(p => p.ReceivedBy)
+            //    .WithMany()
+            //    .HasForeignKey(p => p.ReceivedByID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // Queue relationships
             builder.Entity<PatientQueue>()

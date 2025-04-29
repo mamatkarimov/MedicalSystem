@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedicalSystem.Domain.Entities
@@ -28,5 +30,5 @@ namespace MedicalSystem.Domain.Entities
     public Patient Patient { get; set; }
     public ApplicationUser Doctor { get; set; }
     public ICollection<MedicalHistory> MedicalHistories { get; set; }    
-} 
+}
 }
