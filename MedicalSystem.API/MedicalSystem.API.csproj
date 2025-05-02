@@ -20,4 +20,8 @@
     <ProjectReference Include="..\MedicalSystem.Infrastructure\MedicalSystem.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

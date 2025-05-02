@@ -27,7 +27,7 @@ namespace MedicalSystem.Domain.Entities
     
     // Navigation properties
     public Invoice Invoice { get; set; }
-    public ApplicationUser ReceivedBy { get; set; }
+    public User ReceivedBy { get; set; }
 }
 
 

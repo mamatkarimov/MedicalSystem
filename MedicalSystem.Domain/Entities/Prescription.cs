@@ -30,7 +30,7 @@ namespace MedicalSystem.Domain.Entities
     
     // Navigation properties
     public Patient Patient { get; set; }
-    public ApplicationUser PrescribedBy { get; set; }
+    public User PrescribedBy { get; set; }
 }
 
 

@@ -1,10 +1,17 @@
 using MedicalSystem.AuthService;
 using MedicalSystem.AuthService.Models;
+using MedicalSystem.AuthService.Services;
+using MedicalSystem.Domain.Interfaces;
 using MedicalSystem.Infrastructure.Data;
+using MedicalSystem.Infrastructure.EventBus;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure MSSQL Storage
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //// Add Identity Server
 //builder.Services.AddIdentityServer()
@@ -19,12 +26,23 @@ builder.Services.AddIdentityServer()
     .AddInMemoryIdentityResources(Config.GetIdentityResources())
     .AddInMemoryApiScopes(Config.GetApiScopes())
     .AddInMemoryApiResources(Config.GetApiResources())
-    .AddInMemoryClients(Config.GetClients(builder.Configuration));
+    .AddInMemoryClients(Config.GetClients(builder.Configuration))
+    .AddAspNetIdentity<ApplicationUser>();
 
-// Configure MSSQL Storage
-builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IEventPublisher, RabbitMQEventPublisher>();
+
 
 var app = builder.Build();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseIdentityServer();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 app.Run();

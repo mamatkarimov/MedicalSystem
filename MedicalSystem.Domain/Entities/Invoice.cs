@@ -31,7 +31,7 @@ namespace MedicalSystem.Domain.Entities
     
     // Navigation properties
     public Patient Patient { get; set; }
-    public ApplicationUser CreatedBy { get; set; }
+    public User CreatedBy { get; set; }
     public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
     public ICollection<Payment> Payments { get; set; }
 }

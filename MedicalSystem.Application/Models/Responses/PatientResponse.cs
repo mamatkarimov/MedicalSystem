@@ -15,7 +15,7 @@ namespace MedicalSystem.Application.Models.Responses
         public string InsuranceNumber { get; set; }
 
         // For related data
-        public List<AppointmentResponse> Appointments { get; set; } = new();
+      //  public List<AppointmentResponse> Appointments { get; set; } = new();
 
         // Computed property
         public string FullName => $"{FirstName} {LastName}";

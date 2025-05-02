@@ -23,7 +23,7 @@ namespace MedicalSystem.Domain.Entities
     public string Notes { get; set; }
     
     // Navigation properties
-    public ApplicationUser Nurse { get; set; }
+    public User Nurse { get; set; }
     public Patient Patient { get; set; }
 }
 

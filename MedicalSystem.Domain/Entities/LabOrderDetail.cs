@@ -26,7 +26,7 @@ namespace MedicalSystem.Domain.Entities
     // Navigation properties
     public LabOrder LabOrder { get; set; }
     public LabTestType TestType { get; set; }
-    public ApplicationUser PerformedBy { get; set; }
+    public User PerformedBy { get; set; }
 }
 
 

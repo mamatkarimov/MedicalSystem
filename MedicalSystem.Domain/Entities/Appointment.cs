@@ -28,7 +28,7 @@ namespace MedicalSystem.Domain.Entities
     
     // Navigation properties
     public Patient Patient { get; set; }
-    public ApplicationUser Doctor { get; set; }
+    public User Doctor { get; set; }
     public ICollection<MedicalHistory> MedicalHistories { get; set; }    
 }
 }

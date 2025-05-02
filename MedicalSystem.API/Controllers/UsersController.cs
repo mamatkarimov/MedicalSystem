@@ -1,5 +1,7 @@
-using MedicalSystem.API.Models.Requests;
+
+using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Infrastructure.Identity;
+using MedicalSystem.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -93,6 +95,31 @@ public class UsersController : ControllerBase
         return Ok("Role assigned successfully");
     }
 
-   
+        [HttpGet("ids")]
+        public IActionResult GetAllUserIds()
+        {
+            var userIds = _userManager.Users
+                .Select(u => u.Id)
+                .ToList();
+
+            return Ok(userIds);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserInfo(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            return Ok(new IdentityUserInfo(
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.LockoutEnd == null || user.LockoutEnd < DateTime.Now
+            ));
+        }
+
+
     }
 }

@@ -1,4 +1,6 @@
 using MedicalSystem.AuthService.Models;
+using MedicalSystem.Domain.Events;
+using MedicalSystem.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +12,7 @@ namespace MedicalSystem.AuthService.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-
+        private readonly IEventPublisher _eventPublisher;
         public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
@@ -25,6 +27,13 @@ namespace MedicalSystem.AuthService.Controllers
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
+
+            // After successfully creating ApplicationUser:
+            await _eventPublisher.Publish(new UserCreatedEvent(
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName));
 
             return Ok();
         }

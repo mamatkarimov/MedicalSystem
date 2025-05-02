@@ -25,7 +25,7 @@ public class MedicalHistory
     // Navigation properties
     public Patient Patient { get; set; }
     public Appointment Appointment { get; set; }  // Добавляем навигационное свойство
-    public ApplicationUser RecordedBy { get; set; }
+    public User RecordedBy { get; set; }
 }
 
 

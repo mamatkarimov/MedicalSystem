@@ -29,7 +29,7 @@ namespace MedicalSystem.Domain.Entities
     // Navigation properties
     public Patient Patient { get; set; }
     public Bed Bed { get; set; }
-    public ApplicationUser AttendingDoctor { get; set; }
+    public User AttendingDoctor { get; set; }
     public ICollection<NurseRound> NurseRounds { get; set; }
     public ICollection<PatientDiet> PatientDiets { get; set; }
 }

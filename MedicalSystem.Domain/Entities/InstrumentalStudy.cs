@@ -22,8 +22,8 @@ namespace MedicalSystem.Domain.Entities
         
         // Navigation properties
         public Patient Patient { get; set; }
-        public ApplicationUser OrderedBy { get; set; }
-        public ApplicationUser PerformedBy { get; set; }
+        public User OrderedBy { get; set; }
+        public User PerformedBy { get; set; }
     }
 
    

@@ -16,7 +16,7 @@ namespace MedicalSystem.Domain.Entities
         public string HeadDoctorID { get; set; }
 
         // Navigation properties
-        public ApplicationUser HeadDoctor { get; set; }
+        public User HeadDoctor { get; set; }
         public ICollection<Ward> Wards { get; set; }
     }
 

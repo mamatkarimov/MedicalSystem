@@ -2,12 +2,17 @@ using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Data.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Reflection.Emit;
 
 namespace MedicalSystem.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options) { }
+
+        public DbSet<User> Users => Set<User>();
 
         // Patients module
         public DbSet<Patient> Patients { get; set; }
@@ -54,6 +59,32 @@ namespace MedicalSystem.Infrastructure.Data
             {
                 entity.HasIndex(e => e.UserId).IsUnique();
                 entity.Property(e => e.UserId).IsRequired().HasMaxLength(450);
+            });
+
+
+            // User relationships
+            // User configuration
+            builder.Entity<User>(entity =>
+            {
+                entity.HasKey(u => u.Id);
+
+                // Index for quick lookups by IdentityId
+                entity.HasIndex(u => u.IdentityId)
+                      .IsUnique();
+
+                // Relationships
+                //entity.HasMany(u => u.Appointments)
+                //      .WithOne(a => a.Patient)
+                //      .HasForeignKey(a => a.PatientId);
+
+                //entity.HasMany(u => u.MedicalRecords)
+                //      .WithOne(mr => mr.Patient)
+                //      .HasForeignKey(mr => mr.PatientId);
+
+                // Property configurations
+                entity.Property(u => u.FirstName).HasMaxLength(100);
+                entity.Property(u => u.LastName).HasMaxLength(100);
+                entity.Property(u => u.ProfessionalTitle).HasMaxLength(150);
             });
             // Patient relationships
             builder.Entity<Patient>()
