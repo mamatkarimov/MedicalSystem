@@ -60,5 +60,45 @@ namespace AuthService.Infrastructure.Repositories
                 PageSize = pageSize
             };
         }
+
+        public Task CreateAsync(AuditLog auditLog)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AuditLog>> GetByUserIdAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AuditLog>> GetByActionTypeAsync(string actionType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AuditLog>> SearchAsync(string searchTerm)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> CountAsync(string userId = null, string actionType = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PaginatedResponse<AuditLog>> GetPagedAsync(PaginationParameters pagination, string userId = null, string actionType = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> DeleteOldLogsAsync(DateTime cutoffDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ArchiveLogsAsync(DateTime cutoffDate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

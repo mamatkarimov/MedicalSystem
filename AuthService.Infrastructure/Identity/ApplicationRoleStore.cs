@@ -1,5 +1,7 @@
 ﻿using AuthService.Core.Entities;
+using AuthService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Threading;
@@ -7,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace AuthService.Infrastructure.Identity
 {
-    public class ApplicationRoleStore : RoleStore<Role, ApplicationDbContext, Guid>
+    public class ApplicationRoleStore : RoleStore<ApplicationRole, ApplicationDbContext, Guid>
     {
         public ApplicationRoleStore(ApplicationDbContext context, IdentityErrorDescriber describer = null)
             : base(context, describer)
         {
         }
 
-        public override async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken = default)
+        public override async Task<ApplicationRole> FindByIdAsync(string roleId, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -25,7 +27,7 @@ namespace AuthService.Infrastructure.Identity
                 .FirstOrDefaultAsync(r => r.Id.ToString() == roleId, cancellationToken);
         }
 
-        public override async Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken = default)
+        public override async Task<ApplicationRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();

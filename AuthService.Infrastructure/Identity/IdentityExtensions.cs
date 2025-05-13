@@ -9,8 +9,8 @@ namespace AuthService.Infrastructure.Identity
     public static class IdentityExtensions
     {
         public static async Task<IdentityResult> AddPermissionClaimAsync(
-            this RoleManager<Role> roleManager,
-            Role role,
+            this RoleManager<ApplicationRole> roleManager,
+            ApplicationRole role,
             string permission)
         {
             var allClaims = await roleManager.GetClaimsAsync(role);

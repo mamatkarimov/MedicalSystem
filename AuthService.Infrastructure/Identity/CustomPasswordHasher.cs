@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AuthService.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
 

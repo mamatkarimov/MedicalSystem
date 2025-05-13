@@ -1,4 +1,5 @@
 ﻿using AuthService.Core.Interfaces;
+using AuthService.Infrastructure.Data;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

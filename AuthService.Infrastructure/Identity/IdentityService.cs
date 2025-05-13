@@ -12,11 +12,11 @@ namespace AuthService.Infrastructure.Identity
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         public IdentityService(
             UserManager<User> userManager,
-            RoleManager<Role> roleManager)
+            RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
