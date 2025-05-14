@@ -22,15 +22,52 @@ namespace AuthService.Infrastructure.Repositories
         public IPermissionRepository Permissions => new PermissionRepository(_context);
         public IAuditLogRepository AuditLogs => new AuditLogRepository(_context);
 
+        public IDeviceRepository Devices { get; }
+
+        public void BeginTransaction()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
         {
             return await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public Task CommitAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> CompleteAsync()
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public Task ExecuteInTransactionAsync(Func<Task> operation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> operation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RollbackAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SaveChangesAsync()
+        {
+            throw new NotImplementedException();
         }
 
         protected virtual void Dispose(bool disposing)

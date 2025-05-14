@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthService.Core\AuthService.Core.csproj" />
+    <ProjectReference Include="..\MedicalSystem.Infrastructure\MedicalSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -63,7 +63,8 @@ namespace AuthService.Core.Services
                     IsActive = true
                 };
 
-                var createResult = await _userManager.CreateAsync(newUser, request.Password);
+                var hashedPassword = PasswordHasher.Hash(request.Password);
+                var createResult = await _userManager.CreateAsync(newUser, hashedPassword);
                 if (!createResult.Succeeded)
                 {
                     return new AuthenticationResult
@@ -141,7 +142,9 @@ namespace AuthService.Core.Services
                     };
                 }
 
-                var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+                var hashedPassword = PasswordHasher.Hash(request.Password);
+
+                var signInResult = await _signInManager.CheckPasswordSignInAsync(user, hashedPassword, false);
                 if (!signInResult.Succeeded)
                 {
                     // Track failed attempts
@@ -422,6 +425,11 @@ namespace AuthService.Core.Services
         }
 
         public Task<SessionResult> TerminateAllSessionsAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SessionResult> GetUserProfileAsync(string userId)
         {
             throw new NotImplementedException();
         }

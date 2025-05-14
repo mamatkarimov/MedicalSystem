@@ -48,8 +48,8 @@ namespace AuthService.Infrastructure.Repositories
             if (refreshToken != null)
             {
                 refreshToken.IsRevoked = true;
-                refreshToken.RevokedByIp = ipAddress;
-                refreshToken.ReasonRevoked = reason;
+                refreshToken.IpAddress = ipAddress;
+                //refreshToken.ReasonRevoked = reason;
                 await UpdateAsync(refreshToken);
             }
         }
@@ -63,8 +63,8 @@ namespace AuthService.Infrastructure.Repositories
             foreach (var token in tokens)
             {
                 token.IsRevoked = true;
-                token.RevokedByIp = ipAddress;
-                token.ReasonRevoked = reason;
+                token.IpAddress = ipAddress;
+                //token.ReasonRevoked = reason;
             }
 
             await _context.SaveChangesAsync();
@@ -74,6 +74,21 @@ namespace AuthService.Infrastructure.Repositories
         {
             return await _context.RefreshTokens
                 .AnyAsync(rt => rt.Token == token && !rt.IsRevoked && !rt.IsUsed && rt.ExpiryDate > DateTime.UtcNow);
+        }
+
+        public Task DeleteAsync(string token)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAllForUserAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> ExistsForUserAsync(string userId, string token)
+        {
+            throw new NotImplementedException();
         }
     }
 }

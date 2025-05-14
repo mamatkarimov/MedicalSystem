@@ -41,6 +41,7 @@ namespace AuthService.Core.Interfaces
         // Token Configuration
         int GetRefreshTokenLifetimeDays();
         int GetTokenLifetimeMinutes();
+        Task<SessionResult> ChangePasswordAsync(string userId, ChangePasswordRequest request);
     }
 
 }

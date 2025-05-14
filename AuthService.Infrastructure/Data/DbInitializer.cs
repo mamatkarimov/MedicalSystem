@@ -114,11 +114,11 @@ namespace AuthService.Infrastructure.Data
             // Assign permissions to admin role
             var adminPermissions = new List<RolePermission>
             {
-                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[0].Id },
-                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[1].Id },
-                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[2].Id },
-                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[3].Id },
-                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[4].Id }
+                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[0].Id, Permission = permissions[0] },
+                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[1].Id,Permission = permissions[1] },
+                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[2].Id,Permission = permissions[2] },
+                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[3].Id,Permission = permissions[3] },
+                new RolePermission { RoleId = adminRole.Id, PermissionId = permissions[4].Id,Permission = permissions[4] }
             };
 
             foreach (var adminPermission in adminPermissions)

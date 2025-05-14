@@ -310,6 +310,9 @@ namespace AuthService.Core.Services
             throw new NotImplementedException();
         }
 
-       
+        public Task<SessionResult> ChangePasswordAsync(string userId, ChangePasswordRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

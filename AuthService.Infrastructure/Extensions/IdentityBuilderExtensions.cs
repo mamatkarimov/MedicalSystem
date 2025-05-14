@@ -1,5 +1,6 @@
 ﻿using AuthService.Core.Entities;
 using AuthService.Infrastructure.Identity;
+using MedicalSystem.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,7 +25,7 @@ namespace AuthService.Infrastructure.Extensions
         public static IdentityBuilder AddCustomTokenProviders(this IdentityBuilder builder)
         {
             builder.Services.AddTokenProvider<EmailConfirmationTokenProvider<ApplicationUser>>("emailconfirmation");
-            builder.Services.AddTokenProvider<PhoneConfirmationTokenProvider<ApplicationUser>>("phoneconfirmation");
+            //builder.Services.AddTokenProvider<PhoneConfirmationTokenProvider<ApplicationUser>>("phoneconfirmation");
             return builder;
         }
     }

@@ -9,6 +9,7 @@ using MedicalSystem.Infrastructure.Data;
 using MedicalSystem.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 namespace MedicalSystem.Application.Services
 {
@@ -39,7 +40,7 @@ namespace MedicalSystem.Application.Services
             {
                 UserName = request.Email,
                 Email = request.Email,
-                PhoneNumber = request.PhoneNumber
+                PhoneNumber = request.Phone
             };
 
             var createResult = await _userManager.CreateAsync(user, request.Password);
@@ -52,10 +53,10 @@ namespace MedicalSystem.Application.Services
             // 4. Create Patient profile
             var patient = new Patient
             {
-                UserId = user.Id,
+               // PatientID = user.Id,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                DateOfBirth = request.DateOfBirth,
+                BirthDate = request.BirthDate,
                 // Map other properties
             };
 

@@ -45,6 +45,7 @@ namespace AuthService.Core.Interfaces
         Task<SessionListResult> GetActiveSessionsAsync(string userId);
         Task<SessionResult> TerminateSessionAsync(string userId, string sessionId);
         Task<SessionResult> TerminateAllSessionsAsync(string userId);
+        Task<SessionResult> GetUserProfileAsync(string userId);
     }
 
    

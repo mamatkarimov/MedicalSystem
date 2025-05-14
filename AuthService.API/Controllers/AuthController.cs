@@ -1,4 +1,6 @@
-﻿using AuthService.Core.Interfaces;
+﻿using AuthService.Core.Entities;
+using AuthService.Core.Interfaces;
+using AuthService.Core.Services;
 using AuthService.Shared.DTOs.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,11 +38,11 @@ namespace AuthService.API.Controllers
 
                 if (!result.IsValid)
                 {
-                    return Unauthorized(new
+                    return Unauthorized(new 
                     {
                         Success = false,
                         Message = "Invalid token",
-                        result.Expired
+                        result.IsExpired
                     });
                 }
 
@@ -145,5 +147,7 @@ namespace AuthService.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request");
             }
         }
+
+       
     }
 }
