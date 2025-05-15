@@ -43,7 +43,7 @@ namespace MedicalSystem.Web.Controllers
             var claims = jwt.Claims.ToList();
             claims.Add(new Claim("access_token", token!));
 
-            var identity = new ClaimsIdentity(claims, "MyCookie");
+            var identity = new ClaimsIdentity(claims, "MyCookie", ClaimTypes.Name, ClaimTypes.Role);
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync("MyCookie", principal);

@@ -10,6 +10,20 @@
     <link rel="stylesheet" href="~/MedicalSystem.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <div style="float:right; padding:10px;">
+            👤 @User.Identity.Name (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)
+            |
+            <a href="/Account/Logout">Logout</a>
+        </div>
+    }
+    else
+    {
+        <div style="float:right; padding:10px;">
+            <a href="/Account/Login">Login</a>
+        </div>
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
