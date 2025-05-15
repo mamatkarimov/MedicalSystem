@@ -7,6 +7,7 @@ using System.Text;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using MedicalSystem.Domain.Entities;
+using MedicalSystem.Domain.Enums;
 
 namespace MedicalSystem.API.Endpoints;
 
@@ -93,12 +94,14 @@ public static class AuthEndpoints
             if (await db.Users.AnyAsync(u => u.Username == request.Username))
                 return Results.BadRequest("Username already taken");
 
+            var role = string.IsNullOrEmpty(request.Role) ? UserRoles.User : request.Role;
+
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
             var user = new User
             {
                 Username = request.Username,
                 PasswordHash = hashedPassword,
-                Role = "User" // or get from request later
+                Role = role
             };
 
             db.Users.Add(user);
@@ -106,5 +109,16 @@ public static class AuthEndpoints
 
             return Results.Ok("User registered");
         });
+
+        app.MapGet("/api/doctor/data", (ClaimsPrincipal user) =>
+        {
+            var username = user.Identity?.Name;
+            return Results.Ok($"Doctor-only data for {username}");
+        }).RequireAuthorization(policy => policy.RequireRole(UserRoles.Doctor));
+
+        app.MapGet("/api/admin/data", (ClaimsPrincipal user) =>
+        {
+            return Results.Ok("This is for Admins only.");
+        }).RequireAuthorization(policy => policy.RequireRole(UserRoles.Admin));
     }
 }
