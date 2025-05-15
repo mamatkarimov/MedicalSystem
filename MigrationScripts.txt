@@ -1,0 +1,3 @@
+dotnet tool install --global dotnet-ef
+dotnet ef migrations add InitialCreate --project ../MedicalSystem.Infrastructure --startup-project .
+dotnet ef database update --project ../MedicalSystem.Infrastructure --startup-project .

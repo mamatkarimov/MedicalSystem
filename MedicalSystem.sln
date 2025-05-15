@@ -25,6 +25,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AuthService", "AuthService"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalSystem.Web", "MedicalSystem.Web\MedicalSystem.Web.csproj", "{77FA3E81-31A5-5955-5F2A-4AC4F83604F4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notes", "Notes", "{8DE56DB7-DEBE-4988-B1B4-ADB42E4A64DD}"
+	ProjectSection(SolutionItems) = preProject
+		MigrationScripts.txt = MigrationScripts.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

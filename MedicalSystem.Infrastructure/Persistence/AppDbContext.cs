@@ -11,6 +11,28 @@ namespace MedicalSystem.Infrastructure.Persistence
         : base(options) { }
 
         public DbSet<User> Users => Set<User>();
+        public DbSet<Appointment> Appointments { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Appointment>(entity =>
+            {
+                entity.HasKey(a => a.Id);
+
+                entity.HasOne(a => a.Patient)
+                      .WithMany()
+                      .HasForeignKey(a => a.PatientId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(a => a.Doctor)
+                      .WithMany()
+                      .HasForeignKey(a => a.DoctorId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+        }
+
         //// Patients module
         //public DbSet<Patient> Patients { get; set; }
         //public DbSet<PatientDocument> PatientDocuments { get; set; }

@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Book Appointment";
+    var doctors = ViewBag.Doctors as List<UserDto>;
+}
+
+<h2>Book Appointment</h2>
+
+<form method="post">
+    <div>
+        <label>Doctor</label>
+        <select name="doctorId" required>
+            @foreach (var doc in doctors)
+            {
+                <option value="@doc.Id">@doc.Username</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label>Date</label>
+        <input type="datetime-local" name="date" required />
+    </div>
+    <div>
+        <label>Symptoms</label>
+        <textarea name="symptoms" required></textarea>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color:red">@ViewBag.Error</p>
+}

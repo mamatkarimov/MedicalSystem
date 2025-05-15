@@ -1,34 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
 namespace MedicalSystem.Domain.Entities
 {
     public class Appointment
-{
-    [Key]
-        public int AppointmentID { get; set; }
-    
-    [Required]
-    public int PatientID { get; set; }
-    
-    //[Required]
-    //public string DoctorID { get; set; }
-    
-    [Required]
-    public DateTime AppointmentDate { get; set; }
-    
-    [Required]
-    public string Status { get; set; } // Scheduled, Completed, Cancelled, NoShow
-    
-    public string Reason { get; set; }
-    public string Diagnosis { get; set; }
-    public string TreatmentPlan { get; set; }
-    public string Notes { get; set; }
-    
-    // Navigation properties
-    public Patient Patient { get; set; }
-    public User Doctor { get; set; }
-    public ICollection<MedicalHistory> MedicalHistories { get; set; }    
-}
+    {
+        public Guid Id { get; set; }
+        public Guid PatientId { get; set; }
+        public Guid DoctorId { get; set; }
+        public DateTime Date { get; set; }
+        public string Symptoms { get; set; } = "";
+        public string Status { get; set; } = "Pending";
+
+        public User? Patient { get; set; }
+        public User? Doctor { get; set; }
+    }
 }

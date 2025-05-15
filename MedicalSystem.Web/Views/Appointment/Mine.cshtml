@@ -1,0 +1,20 @@
+﻿@model List<AppointmentDto>
+
+<h2>My Appointments</h2>
+
+<table>
+    <thead>
+        <tr><th>Doctor</th><th>Date</th><th>Symptoms</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var appt in Model)
+        {
+            <tr>
+                <td>@appt.DoctorName</td>
+                <td>@appt.Date</td>
+                <td>@appt.Symptoms</td>
+                <td>@appt.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

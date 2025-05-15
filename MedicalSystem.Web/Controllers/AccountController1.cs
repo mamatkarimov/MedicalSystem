@@ -56,5 +56,27 @@ namespace MedicalSystem.Web.Controllers
             await HttpContext.SignOutAsync("MyCookie");
             return RedirectToAction("Login");
         }
+
+        [HttpGet]
+        public IActionResult Register() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> Register(string username, string password)
+        {
+            var response = await _http.PostAsJsonAsync("/api/auth/register", new
+            {
+                username,
+                password,
+                role = "Patient"
+            });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ViewBag.Error = "Registration failed.";
+                return View();
+            }
+
+            return RedirectToAction("Login");
+        }
     }
 }

@@ -38,7 +38,6 @@
   <ItemGroup>
     <Folder Include="BackgroundServices\" />
     <Folder Include="Configurations\" />
-    <Folder Include="Controllers\" />
     <Folder Include="EventHandlers\" />
     <Folder Include="Infrastructure\" />
     <Folder Include="Mapping\" />
