@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+builder.Services.AddControllers();
 
 // Authentication setup
 builder.Services.AddAuthentication("Bearer")
@@ -24,7 +25,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.MapAuthEndpoints();
+
 
 // Configure middleware
 if (app.Environment.IsDevelopment())
@@ -37,7 +38,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers(); // for attribute routing if needed
-
+app.MapAuthEndpoints();
 // Temporary minimal endpoint to test
 app.MapGet("/", () => "MedicalSystem API is running").AllowAnonymous();
 
