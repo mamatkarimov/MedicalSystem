@@ -48,7 +48,7 @@ namespace MedicalSystem.Application.Services
                 return ServiceResult<PatientResponse>.Failure(createResult.Errors.Select(e => e.Description));
 
             // 3. Assign Patient role
-            await _userManager.AddToRoleAsync(user, Roles.Patient);
+            //await _userManager.AddToRoleAsync(user, Roles.Patient);
 
             // 4. Create Patient profile
             var patient = new Patient

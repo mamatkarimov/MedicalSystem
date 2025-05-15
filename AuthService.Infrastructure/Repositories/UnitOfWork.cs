@@ -20,7 +20,7 @@ namespace AuthService.Infrastructure.Repositories
         public IRoleRepository Roles => new RoleRepository(_context);
         public IRefreshTokenRepository RefreshTokens => new RefreshTokenRepository(_context);
         public IPermissionRepository Permissions => new PermissionRepository(_context);
-        public IAuditLogRepository AuditLogs => new AuditLogRepository(_context);
+        
 
         public IDeviceRepository Devices { get; }
 

@@ -17,13 +17,13 @@ namespace AuthService.Infrastructure.Identity
             return token;
         }
 
-        public override async Task<bool> ValidateAsync(string purpose, string token, UserManager<TUser> manager, TUser user)
-        {
-            return await manager.VerifyUserTokenAsync(
-                user,
-                Options.Tokens.EmailConfirmationTokenProvider,
-                purpose,
-                token);
-        }
+        //public override async Task<bool> ValidateAsync(string purpose, string token, UserManager<TUser> manager, TUser user)
+        //{
+        //    return await manager.VerifyUserTokenAsync(
+        //        user,
+                
+        //        purpose,
+        //        token);
+        //}
     }
 }

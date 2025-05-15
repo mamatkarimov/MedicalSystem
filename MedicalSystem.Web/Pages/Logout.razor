@@ -6,15 +6,15 @@
 <button class="btn btn-danger" onclick="Logout">Logout</button>
 
 @code {
-    private async Task Logout()
-    {
-        // If using Blazor Server
-        if (HttpContextAccessor.HttpContext != null)
-        {
-            await HttpContextAccessor.HttpContext.SignOutAsync("Cookies");
-            await HttpContextAccessor.HttpContext.SignOutAsync("oidc");
-        }
+    // private async Task Logout()
+    // {
+    //     // If using Blazor Server
+    //     if (HttpContextAccessor.HttpContext != null)
+    //     {
+    //         await HttpContextAccessor.HttpContext.SignOutAsync("Cookies");
+    //         await HttpContextAccessor.HttpContext.SignOutAsync("oidc");
+    //     }
 
-        Navigation.NavigateTo("/authentication/logout", forceLoad: true);
-    }
+    //     Navigation.NavigateTo("/authentication/logout", forceLoad: true);
+    // }
 }

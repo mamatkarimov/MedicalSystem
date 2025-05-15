@@ -32,7 +32,7 @@ builder.Services.AddIdentityServer()
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IEventPublisher, RabbitMQEventPublisher>();
+
 
 
 var app = builder.Build();

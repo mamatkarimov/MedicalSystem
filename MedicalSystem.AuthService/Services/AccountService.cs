@@ -23,9 +23,7 @@ namespace MedicalSystem.AuthService.Services
             var user = new ApplicationUser
             {
                 UserName = dto.Email,
-                Email = dto.Email,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName
+                Email = dto.Email
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);

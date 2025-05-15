@@ -55,6 +55,6 @@ namespace AuthService.Core.Entities
         public string GrantedBy { get; set; }
 
         public virtual ApplicationRole Role { get; set; }
-        public virtual required Permission Permission { get; set; }
+        public virtual Permission Permission { get; set; }
     }
 }

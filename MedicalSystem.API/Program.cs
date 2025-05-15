@@ -36,21 +36,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHttpClient<IIdentityServiceClient, IdentityServiceClient>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["AuthService:BaseUrl"]);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-    // Configure retry policy
-}).AddPolicyHandler(Policy<HttpResponseMessage>
-    .Handle<HttpRequestException>()
-    .OrResult(x => !x.IsSuccessStatusCode)
-.WaitAndRetryAsync(3, retryAttempt =>
-        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 // In API Program.cs
-builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, UserEventHandler>();
-builder.Services.AddScoped<IEventHandler<UserUpdatedEvent>, UserEventHandler>();
-builder.Services.AddScoped<IEventHandler<UserDeletedEvent>, UserEventHandler>();
+builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, UserEventsHandler>();
+builder.Services.AddScoped<IEventHandler<UserUpdatedEvent>, UserEventsHandler>();
+builder.Services.AddScoped<IEventHandler<UserDeletedEvent>, UserEventsHandler>();
 
 // Add the dispatcher and consumer
 builder.Services.AddSingleton<EventDispatcher>();

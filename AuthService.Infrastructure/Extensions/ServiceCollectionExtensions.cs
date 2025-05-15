@@ -44,7 +44,7 @@ namespace AuthService.Infrastructure.Extensions
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IPermissionRepository, PermissionRepository>();
-            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+            
 
             // Services
             services.AddScoped<IIdentityService, IdentityService>();

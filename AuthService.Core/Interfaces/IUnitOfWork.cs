@@ -12,7 +12,7 @@ namespace AuthService.Core.Interfaces
         IUserRepository Users { get; }
         IRefreshTokenRepository RefreshTokens { get; }
         IDeviceRepository Devices { get; }
-        IAuditLogRepository AuditLogs { get; }
+        
         IRoleRepository Roles { get; }  // If you have role-specific repository
 
         // Methods
