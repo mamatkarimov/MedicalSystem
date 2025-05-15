@@ -1,5 +1,6 @@
 using AutoMapper;
-using MedicalSystem.API.Models.Requests;
+using MedicalSystem.Application.Models.Requests;
+using MedicalSystem.Application.Models.Responses;
 using MedicalSystem.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

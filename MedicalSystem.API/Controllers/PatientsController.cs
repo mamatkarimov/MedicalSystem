@@ -43,16 +43,16 @@ public class PatientsController : ControllerBase
         return patient;
     }       
 
-        [AllowAnonymous]
+    [AllowAnonymous]
     [HttpPost("self-register")]
-    public async Task<ActionResult<ApiResponse<Patient>>> SelfRegister(RegisterPatientRequest request)
+    public async Task<ActionResult<Patient>> SelfRegister(RegisterPatientRequest request)
     {
         // Validate model
         //if (!ModelState.IsValid)
         //    return BadRequest(ModelState);
 
             if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<PatientDto>(false, "Invalid data", ModelState));
+                return BadRequest(ModelState);
 
 
             // Create patient

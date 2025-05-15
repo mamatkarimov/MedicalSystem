@@ -1,16 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System;
 using MedicalSystem.Infrastructure.Data;
-using MedicalSystem.Infrastructure.Services;
-using MedicalSystem.API.EventHandlers;
 using MedicalSystem.Domain.Events;
-using MedicalSystem.Domain.Interfaces;
-using MedicalSystem.API.BackgroundServices;
-using MedicalSystem.API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,13 +32,8 @@ builder.Services.AddSwaggerGen();
 
 
 // In API Program.cs
-builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, UserEventsHandler>();
-builder.Services.AddScoped<IEventHandler<UserUpdatedEvent>, UserEventsHandler>();
-builder.Services.AddScoped<IEventHandler<UserDeletedEvent>, UserEventsHandler>();
 
 // Add the dispatcher and consumer
-builder.Services.AddSingleton<EventDispatcher>();
-builder.Services.AddHostedService<RabbitMQEventConsumer>();
 
 var app = builder.Build();
 app.UseAuthentication();

@@ -1,5 +1,4 @@
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
 
 namespace MedicalSystem.Application.Models.Responses
 {

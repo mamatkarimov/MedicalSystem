@@ -1,9 +1,6 @@
 using MedicalSystem.AuthService;
 using MedicalSystem.AuthService.Models;
-using MedicalSystem.AuthService.Services;
-using MedicalSystem.Domain.Interfaces;
 using MedicalSystem.Infrastructure.Data;
-using MedicalSystem.Infrastructure.EventBus;
 using Microsoft.EntityFrameworkCore;
 using System;
 
