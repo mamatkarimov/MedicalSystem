@@ -1,6 +1,7 @@
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Data;
+using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ namespace MedicalSystem.API.Controllers
 [ApiController]
 public class MedicalRecordsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context;
 
-    public MedicalRecordsController(ApplicationDbContext context)
+    public MedicalRecordsController(AppDbContext context)
     {
         _context = context;
     }

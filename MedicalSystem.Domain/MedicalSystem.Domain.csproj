@@ -7,6 +7,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Entities\Appointment.cs" />
+    <Compile Remove="Entities\AppToken.cs" />
+    <Compile Remove="Entities\Bed.cs" />
+    <Compile Remove="Entities\CreateInvoiceRequest.cs" />
+    <Compile Remove="Entities\DbUser.cs" />
+    <Compile Remove="Entities\Department.cs" />
+    <Compile Remove="Entities\Hospitalization.cs" />
+    <Compile Remove="Entities\InstrumentalStudy.cs" />
+    <Compile Remove="Entities\Invoice.cs" />
+    <Compile Remove="Entities\InvoiceDetail.cs" />
+    <Compile Remove="Entities\InvoiceItem.cs" />
+    <Compile Remove="Entities\LabOrder.cs" />
+    <Compile Remove="Entities\LabOrderDetail.cs" />
+    <Compile Remove="Entities\LabTestType.cs" />
+    <Compile Remove="Entities\MedicalHistory.cs" />
+    <Compile Remove="Entities\NurseRound.cs" />
+    <Compile Remove="Entities\Patient.cs" />
+    <Compile Remove="Entities\PatientDiet.cs" />
+    <Compile Remove="Entities\PatientDocument.cs" />
+    <Compile Remove="Entities\PatientQueue.cs" />
+    <Compile Remove="Entities\Payment.cs" />
+    <Compile Remove="Entities\Prescription.cs" />
+    <Compile Remove="Entities\Service.cs" />
+    <Compile Remove="Entities\Ward.cs" />
     <Compile Remove="Repositories\ITokenStore.cs" />
   </ItemGroup>
 

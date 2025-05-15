@@ -7,6 +7,7 @@ using MedicalSystem.Application.Models.Results;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Data;
 using MedicalSystem.Infrastructure.Identity;
+using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using System.Data;
 using System.Linq;
@@ -16,12 +17,12 @@ namespace MedicalSystem.Application.Services
     public class PatientService : IPatientService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _context;
+        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
         public PatientService(
             UserManager<ApplicationUser> userManager,
-            ApplicationDbContext context,
+            AppDbContext context,
             IMapper mapper)
         {
             _userManager = userManager;

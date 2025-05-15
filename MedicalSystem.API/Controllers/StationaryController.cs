@@ -2,6 +2,7 @@
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Data;
+using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,9 @@ namespace MedicalSystem.API.Controllers
 [ApiController]
 public class StationaryController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context;
 
-    public StationaryController(ApplicationDbContext context)
+    public StationaryController(AppDbContext context)
     {
         _context = context;
     }

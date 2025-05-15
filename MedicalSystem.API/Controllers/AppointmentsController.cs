@@ -1,6 +1,7 @@
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Data;
+using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ namespace MedicalSystem.API.Controllers
 [ApiController]
 public class AppointmentsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context;
 
-    public AppointmentsController(ApplicationDbContext context)
+    public AppointmentsController(AppDbContext context)
     {
         _context = context;
     }
@@ -32,10 +33,10 @@ public class AppointmentsController : ControllerBase
             .Include(a => a.Doctor);
 
         // Doctors can see only their appointments
-        if (userRoles.Contains("Doctor"))
-        {
-            query = query.Where(a => a.DoctorID == userId);
-        }
+        //if (userRoles.Contains("Doctor"))
+        //{
+        //    query = query.Where(a => a.DoctorID == userId);
+        //}
 
         return await query.ToListAsync();
     }
@@ -55,12 +56,12 @@ public class AppointmentsController : ControllerBase
         }
 
         // Check if doctor is trying to access someone else's appointment
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var isDoctor = User.IsInRole("Doctor");
-        if (isDoctor && appointment.DoctorID != userId)
-        {
-            return Forbid();
-        }
+        //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //var isDoctor = User.IsInRole("Doctor");
+        //if (isDoctor && appointment.Doctor.Id != userId)
+        //{
+        //    return Forbid();
+        //}
 
         return appointment;
     }
@@ -99,7 +100,7 @@ public class AppointmentsController : ControllerBase
         var appointment = new Appointment
         {
             PatientID = request.PatientID,
-            DoctorID = request.DoctorID,
+            //DoctorID = request.DoctorID,
             AppointmentDate = request.AppointmentDate,
             Status = "Scheduled",
             Reason = request.Reason
@@ -128,10 +129,10 @@ public class AppointmentsController : ControllerBase
         }
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (User.IsInRole("Doctor") && existingAppointment.DoctorID != userId)
-        {
-            return Forbid();
-        }
+        //if (User.IsInRole("Doctor") && existingAppointment.DoctorID != userId)
+        //{
+        //    return Forbid();
+        //}
 
         _context.Entry(existingAppointment).CurrentValues.SetValues(appointment);
 

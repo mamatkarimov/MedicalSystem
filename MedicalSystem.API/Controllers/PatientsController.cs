@@ -1,6 +1,7 @@
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Data;
+using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,10 @@ namespace MedicalSystem.API.Controllers
 [ApiController]
 public class PatientsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly    AppDbContext _context;
     private readonly UserManager<MedicalSystem.Infrastructure.Identity.ApplicationUser> _userManager;
 
-    public PatientsController(ApplicationDbContext context, UserManager<MedicalSystem.Infrastructure.Identity.ApplicationUser> userManager)
+    public PatientsController(AppDbContext context, UserManager<MedicalSystem.Infrastructure.Identity.ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;

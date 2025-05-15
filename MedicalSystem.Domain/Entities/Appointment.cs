@@ -12,8 +12,8 @@ namespace MedicalSystem.Domain.Entities
     [Required]
     public int PatientID { get; set; }
     
-    [Required]
-    public string DoctorID { get; set; }
+    //[Required]
+    //public string DoctorID { get; set; }
     
     [Required]
     public DateTime AppointmentDate { get; set; }

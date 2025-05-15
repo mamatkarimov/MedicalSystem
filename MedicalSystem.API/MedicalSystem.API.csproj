@@ -7,9 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\AppointmentsController.cs" />
+    <Compile Remove="Controllers\AuthController.cs" />
+    <Compile Remove="Controllers\LaboratoryController.cs" />
+    <Compile Remove="Controllers\MedicalRecordsController.cs" />
+    <Compile Remove="Controllers\PatientsController.cs" />
+    <Compile Remove="Controllers\PaymentsController.cs" />
+    <Compile Remove="Controllers\QueueController.cs" />
+    <Compile Remove="Controllers\ReportsController.cs" />
+    <Compile Remove="Controllers\StationaryController.cs" />
+    <Compile Remove="Controllers\UsersController.cs" />
+    <Compile Remove="Controllers\ValuesController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
   </ItemGroup>
@@ -22,6 +37,11 @@
 
   <ItemGroup>
     <Folder Include="BackgroundServices\" />
+    <Folder Include="Configurations\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="EventHandlers\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Mapping\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
