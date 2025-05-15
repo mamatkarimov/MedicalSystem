@@ -1,49 +1,42 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System;
-using MedicalSystem.Infrastructure.Data;
-using MedicalSystem.Domain.Events;
+using MedicalSystem.API.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add JWT Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+// Add services to the container
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
+
+// Authentication setup
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = builder.Configuration["Auth:Authority"];
-        options.Audience = "medicalapi";
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = true,
-            NameClaimType = ClaimTypes.Name, // Map claims properly
-            RoleClaimType = ClaimTypes.Role
-        };
+        options.Authority = "https://localhost:5001"; // Change as needed
+        options.RequireHttpsMetadata = false;
+        options.Audience = "medical_api";
     });
 
-// Add MSSQL Database
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-// In API Program.cs
-
-// Add the dispatcher and consumer
-
 var app = builder.Build();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
 
+app.MapAuthEndpoints();
+
+// Configure middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers(); // for attribute routing if needed
+
+// Temporary minimal endpoint to test
+app.MapGet("/", () => "MedicalSystem API is running").AllowAnonymous();
 
 app.Run();
