@@ -1,6 +1,8 @@
-using MedicalSystem.API.Endpoints;
+﻿using MedicalSystem.API.Endpoints;
 using MedicalSystem.Infrastructure;
 using MedicalSystem.Application;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddControllers();
 
+var jwtKey = builder.Configuration["Jwt:Key"];
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+
 // Authentication setup
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -16,6 +21,17 @@ builder.Services.AddAuthentication("Bearer")
         options.Authority = "https://localhost:5001"; // Change as needed
         options.RequireHttpsMetadata = false;
         options.Audience = "medical_api";
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = key // ✅ MUST MATCH the key used in AuthEndpoints
+        };
     });
 
 builder.Services.AddAuthorization();
