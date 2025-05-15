@@ -30,6 +30,8 @@ namespace MedicalSystem.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Guid doctorId, DateTime date, string symptoms)
         {
+            Console.WriteLine($"doctorId: {doctorId}, date: {date}, symptoms: {symptoms}");
+
             var client = _factory.CreateClient("api");
             AddToken(client);
 
