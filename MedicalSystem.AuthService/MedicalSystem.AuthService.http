@@ -1,6 +1,0 @@
-@MedicalSystem.AuthService_HostAddress = http://localhost:5261
-
-GET {{MedicalSystem.AuthService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
