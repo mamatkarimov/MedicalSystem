@@ -1,0 +1,32 @@
+﻿@model List<AppointmentDto>
+
+<h2>My Appointments</h2>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Doctor</th>
+                <th>Symptoms</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appt in Model)
+            {
+                <tr>
+                    <td>@appt.Date.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@appt.DoctorName</td>
+                    <td>@appt.Symptoms</td>
+                    <td>@appt.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>You have no appointments yet.</p>
+}

@@ -1,6 +1,7 @@
 ﻿using MedicalSystem.API.Models.User;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 //namespace MedicalSystem.API.Endpoints
 //{
@@ -38,6 +39,31 @@ public static class UserEndpoints
             return Results.Ok($"User role updated to {request.Role}");
         }).RequireAuthorization(policy => policy.RequireRole("Admin"));
 
+
+        app.MapGet("/api/appointment/mine", async (HttpContext http, AppDbContext db) =>
+        {
+            var userIdClaim = http.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var patientId))
+                return Results.Unauthorized();
+
+            var appointments = await db.Appointments
+                .Where(a => a.PatientId == patientId)
+                .Include(a => a.Doctor)
+                .OrderByDescending(a => a.Date)
+                .Select(a => new
+                {
+                    a.Id,
+                    a.Date,
+                    a.Symptoms,
+                    a.Status,
+                    Doctor = a.Doctor.Username
+                })
+                .ToListAsync();
+
+            return Results.Ok(appointments);
+        })
+.RequireAuthorization("Patient");
     }
 
 

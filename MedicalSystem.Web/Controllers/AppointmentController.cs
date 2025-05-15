@@ -62,7 +62,7 @@ namespace MedicalSystem.Web.Controllers
             var client = _factory.CreateClient("api");
             AddToken(client);
 
-            var appointments = await client.GetFromJsonAsync<List<AppointmentDto>>("/api/appointment/mine");
+            var appointments = await client.GetFromJsonAsync<List<AppointmentDto>>("/api/appointment/MyAppointments");
             return View(appointments);
         }
 
@@ -71,6 +71,23 @@ namespace MedicalSystem.Web.Controllers
             var token = User.FindFirst("access_token")?.Value;
             if (token != null)
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        public async Task<IActionResult> MyAppointments()
+        {
+            var token = Request.Cookies["jwt"];
+            var client = _factory.CreateClient("api");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync("/api/appointment/mine");
+            if (!response.IsSuccessStatusCode)
+            {
+                ViewBag.Error = "Failed to load appointments.";
+                return View(new List<AppointmentDto>());
+            }
+
+            var appointments = await response.Content.ReadFromJsonAsync<List<AppointmentDto>>();
+            return View(appointments);
         }
     }
 }

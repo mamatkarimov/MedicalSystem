@@ -24,6 +24,12 @@
             <a href="/Account/Login">Login</a>
         </div>
     }
+
+    @if (User.IsInRole("Patient"))
+    {
+        <a href="/Appointment/MyAppointments">🗓 My Appointments</a>
+    }
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
