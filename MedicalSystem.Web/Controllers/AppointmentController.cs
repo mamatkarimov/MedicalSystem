@@ -73,6 +73,7 @@ namespace MedicalSystem.Web.Controllers
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
+        [HttpGet]
         public async Task<IActionResult> MyAppointments()
         {
             var token = Request.Cookies["jwt"];

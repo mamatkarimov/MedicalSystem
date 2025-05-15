@@ -34,7 +34,19 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Patient", policy =>
+    {
+        policy.RequireRole("Patient");
+    });
+
+    // You may add other roles too for later use
+    options.AddPolicy("Doctor", policy =>
+    {
+        policy.RequireRole("Doctor");
+    });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
