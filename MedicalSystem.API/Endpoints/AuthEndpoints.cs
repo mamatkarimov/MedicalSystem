@@ -22,15 +22,30 @@ public static class AuthEndpoints
                     new Claim(ClaimTypes.Role, "Admin")
                 };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretKey@345"));
+                //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisIsASuperLongSecretKeyWithAtLeast32Characters"));
+
+                var configuration = app.Services.GetRequiredService<IConfiguration>();
+                var jwtKey = configuration["Jwt:Key"];
+                var issuer = configuration["Jwt:Issuer"];
+                var audience = configuration["Jwt:Audience"];
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+                //var token = new JwtSecurityToken(
+                //    issuer: "MedicalSystem",
+                //    audience: "medical_api",
+                //    claims: claims,
+                //    expires: DateTime.Now.AddHours(1),
+                //    signingCredentials: creds);
+
                 var token = new JwtSecurityToken(
-                    issuer: "MedicalSystem",
-                    audience: "medical_api",
-                    claims: claims,
-                    expires: DateTime.Now.AddHours(1),
-                    signingCredentials: creds);
+    issuer: issuer,
+    audience: audience,
+    claims: claims,
+    expires: DateTime.Now.AddHours(1),
+    signingCredentials: creds);
 
                 return Results.Ok(new
                 {
