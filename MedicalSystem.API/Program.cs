@@ -1,4 +1,6 @@
 using MedicalSystem.API.Endpoints;
+using MedicalSystem.Infrastructure;
+using MedicalSystem.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
