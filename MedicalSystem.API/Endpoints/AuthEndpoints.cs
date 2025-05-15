@@ -120,5 +120,26 @@ public static class AuthEndpoints
         {
             return Results.Ok("This is for Admins only.");
         }).RequireAuthorization(policy => policy.RequireRole(UserRoles.Admin));
+
+        app.MapGet("/api/auth/me", async (ClaimsPrincipal user, AppDbContext db) =>
+        {
+            var username = user.Identity?.Name;
+
+            if (string.IsNullOrEmpty(username))
+                return Results.Unauthorized();
+
+            var found = await db.Users
+                .Where(u => u.Username == username)
+                .Select(u => new UserInfoResponse
+                {
+                    Username = u.Username,
+                    Role = u.Role
+                })
+                .FirstOrDefaultAsync();
+
+            return found is not null
+                ? Results.Ok(found)
+                : Results.NotFound("User not found");
+        }).RequireAuthorization();
     }
 }
