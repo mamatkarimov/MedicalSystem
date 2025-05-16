@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MedicalSystem.Staff.Data;
 using Microsoft.AspNetCore.Components.Authorization;
+using MedicalSystem.Staff.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,9 +1,48 @@
-﻿@page "/"
+﻿@page "/login"
+@using MedicalSystem.Staff.Auth
+@using MedicalSystem.Staff.Models
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject CustomAuthStateProvider AuthStateProvider
 
-<PageTitle>Index</PageTitle>
+<h3>Login</h3>
 
-<h1>Hello, world!</h1>
+<EditForm Model="model" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <InputText @bind-Value="model.Username" placeholder="Username" />
+    <InputText @bind-Value="model.Password" type="password" placeholder="Password" />
+    <button type="submit">Login</button>
+</EditForm>
 
-Welcome to your new app.
+@if (!string.IsNullOrEmpty(error))
+{
+    <p style="color:red">@error</p>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    private LoginRequest model = new();
+    private string error = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/auth/login", model);
+            if (!response.IsSuccessStatusCode)
+            {
+                error = "Invalid login.";
+                return;
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            AuthStateProvider.SetToken(result!.Token);
+
+            Nav.NavigateTo("/");
+        }
+        catch
+        {
+            error = "Server error during login.";
+        }
+    }
+}

@@ -7,7 +7,7 @@ namespace MedicalSystem.API.Endpoints
 {
     public static class AppointmentEndpoints
     {
-        public static void MapAuthEndpoints(this WebApplication app)
+        public static void MapAppointmentEndpoints(this WebApplication app)
         {
             app.MapGet("/api/appointment/doctor", async (HttpContext http, AppDbContext db) =>
 {

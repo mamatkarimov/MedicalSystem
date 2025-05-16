@@ -1,7 +1,19 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>MedicalSystem.Staff</PageTitle>
+@code {
+    private ClaimsPrincipal? user;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
+    }
+}
+<div>
+    👤 @user?.Identity?.Name | Role: @user?.FindFirst(ClaimTypes.Role)?.Value
+</div>
 <div class="page">
     <div class="sidebar">
         <NavMenu />
