@@ -30,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notes", "Notes", "{8DE56DB7
 		MigrationScripts.txt = MigrationScripts.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalSystem.Staff", "MedicalSystem.Staff\MedicalSystem.Staff.csproj", "{B31D448A-CB49-717E-4EBF-A7BA49D5317C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +162,18 @@ Global
 		{77FA3E81-31A5-5955-5F2A-4AC4F83604F4}.Release|x64.Build.0 = Release|Any CPU
 		{77FA3E81-31A5-5955-5F2A-4AC4F83604F4}.Release|x86.ActiveCfg = Release|Any CPU
 		{77FA3E81-31A5-5955-5F2A-4AC4F83604F4}.Release|x86.Build.0 = Release|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Debug|x64.Build.0 = Debug|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Debug|x86.Build.0 = Debug|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Release|x64.ActiveCfg = Release|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Release|x64.Build.0 = Release|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Release|x86.ActiveCfg = Release|Any CPU
+		{B31D448A-CB49-717E-4EBF-A7BA49D5317C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
