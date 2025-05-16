@@ -1,41 +1,53 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using MedicalSystem.Staff.Data;
+﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using MedicalSystem.Staff;
 using MedicalSystem.Staff.Auth;
+using static MedicalSystem.Staff.Auth.CustomAuthStateProvider;
+using Microsoft.JSInterop;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 🔧 Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddHttpClient("MedicalApi", client =>
-{
-    client.BaseAddress = new Uri("http://localhost:5074");
-});
 
-// Optional: named client
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("MedicalApi"));
+// ✅ Blazored Local Storage
+builder.Services.AddBlazoredLocalStorage();
 
+// ✅ Authorization Core
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<CustomAuthStateProvider>();
 
+// ✅ Register CustomAuthStateProvider
+builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
-    provider.GetRequiredService<CustomAuthStateProvider>());
+    provider.GetRequiredService<CustomAuthStateProvider>()
+);
+
+builder.Services.AddScoped<CustomAuthStateProvider>(sp =>
+    new CustomAuthStateProvider(
+        sp.GetRequiredService<ILocalStorageService>(),
+        sp.GetRequiredService<IJSRuntime>()
+    ));
+
+// ✅ Custom message handler to inject token into API requests
+builder.Services.AddScoped<CustomAuthMessageHandler>();
+
+// ✅ HttpClient for talking to your API
+builder.Services.AddScoped(sp => new HttpClient(sp.GetRequiredService<CustomAuthMessageHandler>())
+{
+    BaseAddress = new Uri("https://localhost:5074") // ⬅️ API base address
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 🔧 Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 
 app.UseRouting();

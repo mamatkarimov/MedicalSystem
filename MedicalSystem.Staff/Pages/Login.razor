@@ -36,7 +36,7 @@
             }
 
             var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
-            AuthStateProvider.SetToken(result!.Token);
+            await AuthStateProvider.SetToken(result!.Token);
 
             Nav.NavigateTo("/");
         }
