@@ -7,17 +7,13 @@ using Microsoft.JSInterop;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔧 Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-// ✅ Blazored Local Storage
 builder.Services.AddBlazoredLocalStorage();
 
-// ✅ Authorization Core
 builder.Services.AddAuthorizationCore();
 
-// ✅ Register CustomAuthStateProvider
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
     provider.GetRequiredService<CustomAuthStateProvider>()
@@ -29,10 +25,8 @@ builder.Services.AddScoped<CustomAuthStateProvider>(sp =>
         sp.GetRequiredService<IJSRuntime>()
     ));
 
-// ✅ Custom message handler to inject token into API requests
 builder.Services.AddScoped<CustomAuthMessageHandler>();
 
-// ✅ HttpClient for talking to your API
 builder.Services.AddScoped(sp => new HttpClient(sp.GetRequiredService<CustomAuthMessageHandler>())
 {
     BaseAddress = new Uri("https://localhost:5074") // ⬅️ API base address
@@ -40,7 +34,6 @@ builder.Services.AddScoped(sp => new HttpClient(sp.GetRequiredService<CustomAuth
 
 var app = builder.Build();
 
-// 🔧 Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");

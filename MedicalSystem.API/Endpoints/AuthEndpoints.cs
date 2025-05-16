@@ -114,8 +114,18 @@ public static class AuthEndpoints
         app.MapGet("/api/doctor/data", (ClaimsPrincipal user) =>
         {
             var username = user.Identity?.Name;
+            //var roles = user.Claims
+            //    .Where(c => c.Type == ClaimTypes.Role)
+            //    .Select(c => c.Value);
+
+            //return Results.Ok(new
+            //{
+            //    User = username,
+            //    Roles = roles
+            //});
             return Results.Ok($"Doctor-only data for {username}");
-        }).RequireAuthorization(policy => policy.RequireRole(UserRoles.Doctor));
+        })
+.RequireAuthorization(policy => policy.RequireRole("Doctor"));
 
         app.MapGet("/api/admin/data", (ClaimsPrincipal user) =>
         {

@@ -17,7 +17,7 @@ namespace MedicalSystem.API.Controllers
         }
 
         [HttpGet("doctors")]
-        [Authorize(Roles = "Patient,Admin")]
+        [Authorize(Roles = "Doctor,Patient,Admin")]
         public async Task<IActionResult> GetDoctors()
         {
             var doctors = await _context.Users
