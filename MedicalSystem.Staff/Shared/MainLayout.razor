@@ -1,5 +1,5 @@
-﻿@inherits LayoutComponentBase
-@inject AuthenticationStateProvider AuthStateProvider
+﻿@inject AuthenticationStateProvider AuthStateProvider
+@inherits LayoutComponentBase
 
 <PageTitle>MedicalSystem.Staff</PageTitle>
 @code {
@@ -9,6 +9,12 @@
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         user = authState.User;
+
+        Console.WriteLine("USER IDENTITY: " + user.Identity?.Name);
+        foreach (var claim in user.Claims)
+        {
+            Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
+        }
     }
 }
 <div>
