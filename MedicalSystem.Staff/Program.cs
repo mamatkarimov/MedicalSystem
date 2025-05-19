@@ -1,37 +1,40 @@
-﻿using Blazored.LocalStorage;
+﻿using MedicalSystem.Staff.Auth;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
-using MedicalSystem.Staff;
-using MedicalSystem.Staff.Auth;
-using static MedicalSystem.Staff.Auth.CustomAuthStateProvider;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddBlazoredLocalStorage();
 
-builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<CustomAuthStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
-    provider.GetRequiredService<CustomAuthStateProvider>()
-);
+// Cookie-based authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login"; // Adjust to your login page
+        options.AccessDeniedPath = "/access-denied"; // Optional
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
+    });
 
-builder.Services.AddScoped<CustomAuthStateProvider>(sp =>
-    new CustomAuthStateProvider(
-        sp.GetRequiredService<ILocalStorageService>(),
-        sp.GetRequiredService<IJSRuntime>()
-    ));
+builder.Services.AddAuthorization();
 
-builder.Services.AddScoped<CustomAuthMessageHandler>();
+// Register a custom AuthenticationStateProvider if needed (optional)
+builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 
-builder.Services.AddScoped(sp => new HttpClient(sp.GetRequiredService<CustomAuthMessageHandler>())
-{
-    BaseAddress = new Uri("https://localhost:5074") // ⬅️ API base address
-});
+// Optional: IHttpContextAccessor to access cookies/session
+builder.Services.AddHttpContextAccessor();
 
+// Register your custom services (e.g. API services that use JWT)
+builder.Services.AddHttpClient();
+
+// Build the app
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -42,6 +45,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
