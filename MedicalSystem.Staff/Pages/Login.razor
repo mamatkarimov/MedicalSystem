@@ -11,22 +11,15 @@
     <div class="alert alert-danger">@ErrorMessage</div>
 }
 
-<EditForm OnValidSubmit="HandleLoginAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+            <EditForm Model="@loginModel" OnValidSubmit="HandleLoginAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-    <div class="form-group">
-        <label>Username</label>
-        <InputText class="form-control" @bind-Value="Username" />
-    </div>
+                <InputText @bind-Value="loginModel.Username" class="form-control" placeholder="Username" />
+                <InputText @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="Password" />
 
-    <div class="form-group">
-        <label>Password</label>
-        <InputText class="form-control" type="password" @bind-Value="Password" />
-    </div>
-
-    <button class="btn btn-primary" type="submit">Login</button>
-</EditForm>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </EditForm>
 
         </div>
     </div>

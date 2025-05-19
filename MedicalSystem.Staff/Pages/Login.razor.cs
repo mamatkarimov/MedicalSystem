@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -23,12 +24,24 @@ namespace MedicalSystem.Staff.Pages
         private string Password { get; set; } = string.Empty;
         private string ErrorMessage { get; set; }
 
+
+        public class LoginModel
+        {
+            [Required]
+            public string Username { get; set; }
+
+            [Required]
+            public string Password { get; set; }
+        }
+
+        private LoginModel loginModel = new();
+
         private async Task HandleLoginAsync()
         {
             var loginRequest = new
             {
-                username = Username,
-                password = Password
+                username = loginModel.Username,
+                password = loginModel.Password
             };
 
             var httpClient = HttpClientFactory.CreateClient();
