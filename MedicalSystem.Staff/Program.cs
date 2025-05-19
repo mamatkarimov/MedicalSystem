@@ -1,6 +1,8 @@
 ﻿using MedicalSystem.Staff.Auth;
+using MedicalSystem.Staff.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.Security.Claims;
 
@@ -23,13 +25,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 // Register a custom AuthenticationStateProvider if needed (optional)
-builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+//builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
 // Optional: IHttpContextAccessor to access cookies/session
 builder.Services.AddHttpContextAccessor();
 
 // Register your custom services (e.g. API services that use JWT)
 builder.Services.AddHttpClient();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<ProtectedLocalStorage>();
 
 // Build the app
 var app = builder.Build();
