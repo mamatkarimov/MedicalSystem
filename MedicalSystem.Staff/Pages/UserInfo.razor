@@ -1,0 +1,62 @@
+﻿@inject AuthenticationStateProvider AuthStateProvider
+
+<AuthorizeView>
+    <Authorized>
+        <span>@username</span>
+    </Authorized>
+    <NotAuthorized>
+        <span>Guest</span>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string? username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            username = user.FindFirst(c =>
+                c.Type == "unique_name" ||
+                c.Type == "name" ||
+                c.Type == "preferred_username")?.Value
+                ?? user.Identity.Name;
+        }
+        else
+        {
+            username = "Guest";
+        }
+
+        // Listen to authentication state changes to update username dynamically
+        AuthStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var authState = await task;
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            username = user.FindFirst(c =>
+                c.Type == "unique_name" ||
+                c.Type == "name" ||
+                c.Type == "preferred_username")?.Value
+                ?? user.Identity.Name;
+        }
+        else
+        {
+            username = "Guest";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AuthStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}
