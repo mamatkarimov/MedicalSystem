@@ -1,9 +1,7 @@
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
-using MedicalSystem.Infrastructure.Data;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,13 +12,11 @@ namespace MedicalSystem.API.Controllers
 [ApiController]
 public class PatientsController : ControllerBase
 {
-    private readonly    AppDbContext _context;
-    private readonly UserManager<MedicalSystem.Infrastructure.Identity.ApplicationUser> _userManager;
+    private readonly AppDbContext _context;    
 
-    public PatientsController(AppDbContext context, UserManager<MedicalSystem.Infrastructure.Identity.ApplicationUser> userManager)
+    public PatientsController(AppDbContext context)
     {
         _context = context;
-        _userManager = userManager;
     }
 
     [Authorize(Roles = "Admin,Reception")]
@@ -32,7 +28,7 @@ public class PatientsController : ControllerBase
 
     [Authorize(Roles = "Admin,Reception")]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Patient>> GetPatient(int id)
+    public async Task<ActionResult<Patient>> GetPatient(Guid id)
     {
         var patient = await _context.Patients.FindAsync(id);
 
@@ -42,59 +38,7 @@ public class PatientsController : ControllerBase
         }
 
         return patient;
-    }       
-
-    [AllowAnonymous]
-    [HttpPost("self-register")]
-    public async Task<ActionResult<Patient>> SelfRegister(RegisterPatientRequest request)
-    {
-        // Validate model
-        //if (!ModelState.IsValid)
-        //    return BadRequest(ModelState);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-
-            // Create patient
-            var patient = new Patient
-        {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            MiddleName = request.MiddleName,
-            BirthDate = request.BirthDate,
-            Gender = request.Gender,
-            Address = request.Address,
-            Phone = request.Phone,
-            Email = request.Email,
-            InsuranceNumber = request.InsuranceNumber,
-            InsuranceCompany = request.InsuranceCompany
-        };
-
-        _context.Patients.Add(patient);
-        await _context.SaveChangesAsync();
-
-        // If credentials provided, create user account
-        if (!string.IsNullOrEmpty(request.Username) && !string.IsNullOrEmpty(request.Password))
-        {
-            var user = new MedicalSystem.Infrastructure.Identity.ApplicationUser
-            {
-                UserName = request.Username,
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                MiddleName = request.MiddleName
-            };
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "Patient");
-            }
-        }
-
-        return CreatedAtAction("GetPatient", new { id = patient.PatientID }, patient);
-    }
+    }          
 
     [Authorize(Roles = "Admin,Reception")]
     [HttpPost("register")]
@@ -104,28 +48,22 @@ public class PatientsController : ControllerBase
         var patient = new Patient
         {
             FirstName = request.FirstName,
-            LastName = request.LastName,
-            MiddleName = request.MiddleName,
-            BirthDate = request.BirthDate,
-            Gender = request.Gender,
-            Address = request.Address,
-            Phone = request.Phone,
-            Email = request.Email,
-            InsuranceNumber = request.InsuranceNumber,
-            InsuranceCompany = request.InsuranceCompany
+            LastName = request.LastName,  
+            DateOfBirth = request.BirthDate,
+            Gender = request.Gender            
         };
 
         _context.Patients.Add(patient);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetPatient", new { id = patient.PatientID }, patient);
+        return CreatedAtAction("GetPatient", new { id = patient.Id }, patient);
     }
 
     [Authorize(Roles = "Admin,Reception")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePatient(int id, Patient patient)
+    public async Task<IActionResult> UpdatePatient(Guid id, Patient patient)
     {
-        if (id != patient.PatientID)
+        if (id != patient.Id)
         {
             return BadRequest();
         }
@@ -153,7 +91,7 @@ public class PatientsController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePatient(int id)
+    public async Task<IActionResult> DeletePatient(Guid id)
     {
         var patient = await _context.Patients.FindAsync(id);
         if (patient == null)
@@ -161,15 +99,15 @@ public class PatientsController : ControllerBase
             return NotFound();
         }
 
-        patient.IsActive = false;
+        //patient.IsActive = false;
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
-    private bool PatientExists(int id)
+    private bool PatientExists(Guid id)
     {
-        return _context.Patients.Any(e => e.PatientID == id);
+        return _context.Patients.Any(e => e.Id == id);
     }
 }
 }

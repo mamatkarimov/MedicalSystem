@@ -17,11 +17,11 @@ namespace MedicalSystem.API.Controllers
         }
 
         [HttpGet("doctors")]
-        [Authorize(Roles = "Patient,Admin")]
+        [Authorize(Roles = "Patient, Admin")]
         public async Task<IActionResult> GetDoctors()
         {
             var doctors = await _context.Users
-                .Where(u => u.Role == "Doctor")
+                .Where(u => u.UserRoles.con == "Doctor")
                 .Select(u => new
                 {
                     u.Id,

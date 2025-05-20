@@ -13,7 +13,7 @@ namespace MedicalSystem.Domain.Entities
         public string FullName { get; set; } = default!;
         public string Email { get; set; } = default!;
         public bool IsActive { get; set; } = true;
-        public string Role { get; set; } = default!;
+        //public string Role { get; set; } = default!;
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }
 
@@ -41,6 +41,8 @@ namespace MedicalSystem.Domain.Entities
         public string LastName { get; set; } = default!;
         public DateTime DateOfBirth { get; set; }
         public string Gender { get; set; } = default!;
+
+        public bool IsActive { get; set; } = true;
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public ICollection<HospitalVisit> HospitalVisits { get; set; } = new List<HospitalVisit>();
@@ -134,7 +136,7 @@ namespace MedicalSystem.Domain.Entities
         public Guid Id { get; set; }
         public string Name { get; set; } = default!;
         public string Description { get; set; } = default!;
-        public ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
+        //public ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
     }
 
     public class TestResult

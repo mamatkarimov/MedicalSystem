@@ -11,315 +11,263 @@ namespace MedicalSystem.Infrastructure.Persistence
         : base(options) { }
 
         public DbSet<User> Users => Set<User>();
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Patient> Patients { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<MedicalRecord> MedicalRecords { get; set; }
+        public DbSet<HospitalVisit> HospitalVisits { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Refund> Refunds { get; set; }
+        public DbSet<AssignedTest> AssignedTests { get; set; }
+        public DbSet<TestTemplate> TestTemplates { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<QueueItem> QueueItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // User Configuration
+            modelBuilder.Entity<User>(entity =>
+                {
+                    entity.HasKey(u => u.Id);
+                    entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
+                    entity.Property(u => u.PasswordHash).IsRequired();
+                    entity.Property(u => u.FullName).IsRequired().HasMaxLength(100);
+                    entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
+                    entity.Property(u => u.IsActive).HasDefaultValue(true);
+                    entity.Property(u => u.Role).HasMaxLength(50);
+
+                    // Indexes
+                    entity.HasIndex(u => u.Username).IsUnique();
+                    entity.HasIndex(u => u.Email).IsUnique();
+
+                    // Relationships
+                    entity.HasMany(u => u.UserRoles)
+                          .WithOne(ur => ur.User)
+                          .HasForeignKey(ur => ur.UserId);
+                });
+
+            // Role Configuration
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.HasKey(r => r.Id);
+                entity.Property(r => r.Name).IsRequired().HasMaxLength(50);
+
+                // Relationships
+                entity.HasMany(r => r.UserRoles)
+                      .WithOne(ur => ur.Role)
+                      .HasForeignKey(ur => ur.RoleId);
+            });
+
+            // UserRole (junction table) Configuration
+            modelBuilder.Entity<UserRole>(entity =>
+            {
+                entity.HasKey(ur => new { ur.UserId, ur.RoleId });
+
+                // Relationships
+                entity.HasOne(ur => ur.User)
+                      .WithMany(u => u.UserRoles)
+                      .HasForeignKey(ur => ur.UserId);
+
+                entity.HasOne(ur => ur.Role)
+                      .WithMany(r => r.UserRoles)
+                      .HasForeignKey(ur => ur.RoleId);
+            });
+
+            // Patient Configuration
+            modelBuilder.Entity<Patient>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.FirstName).IsRequired().HasMaxLength(50);
+                entity.Property(p => p.LastName).IsRequired().HasMaxLength(50);
+                entity.Property(p => p.Gender).IsRequired().HasMaxLength(10);
+
+                // Relationships
+                entity.HasOne(p => p.User)
+                      .WithMany()
+                      .HasForeignKey(p => p.UserId)
+                      .IsRequired(false)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(p => p.Appointments)
+                      .WithOne(a => a.Patient)
+                      .HasForeignKey(a => a.PatientId);
+
+                entity.HasMany(p => p.HospitalVisits)
+                      .WithOne(hv => hv.Patient)
+                      .HasForeignKey(hv => hv.PatientId);
+
+                entity.HasMany(p => p.Payments)
+                      .WithOne(p => p.Patient)
+                      .HasForeignKey(p => p.PatientId);
+
+                entity.HasMany(p => p.MedicalRecords)
+                      .WithOne(mr => mr.Patient)
+                      .HasForeignKey(mr => mr.PatientId);
+            });
+
+            // Appointment Configuration
             modelBuilder.Entity<Appointment>(entity =>
             {
                 entity.HasKey(a => a.Id);
+                entity.Property(a => a.Status).HasDefaultValue("Scheduled");
+                entity.Property(a => a.Symptoms).HasDefaultValue("");
 
+                // Relationships
                 entity.HasOne(a => a.Patient)
-                      .WithMany()
-                      .HasForeignKey(a => a.PatientId)
-                      .OnDelete(DeleteBehavior.Restrict);
+                      .WithMany(p => p.Appointments)
+                      .HasForeignKey(a => a.PatientId);
 
                 entity.HasOne(a => a.Doctor)
                       .WithMany()
                       .HasForeignKey(a => a.DoctorId)
                       .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(a => a.AssignedTests)
+                      .WithOne(at => at.Appointment)
+                      .HasForeignKey(at => at.AppointmentId);
+            });
+
+            // MedicalRecord Configuration
+            modelBuilder.Entity<MedicalRecord>(entity =>
+            {
+                entity.HasKey(mr => mr.Id);
+                entity.Property(mr => mr.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(mr => mr.Anamnesis).IsRequired();
+                entity.Property(mr => mr.Diagnosis).IsRequired();
+                entity.Property(mr => mr.Prescriptions).IsRequired();
+
+                // Relationships
+                entity.HasOne(mr => mr.Patient)
+                      .WithMany(p => p.MedicalRecords)
+                      .HasForeignKey(mr => mr.PatientId);
+
+                entity.HasOne(mr => mr.Doctor)
+                      .WithMany()
+                      .HasForeignKey(mr => mr.DoctorId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // HospitalVisit Configuration
+            modelBuilder.Entity<HospitalVisit>(entity =>
+            {
+                entity.HasKey(hv => hv.Id);
+                entity.Property(hv => hv.Notes).IsRequired();
+                entity.Property(hv => hv.BedNumber).IsRequired();
+
+                // Relationships
+                entity.HasOne(hv => hv.Patient)
+                      .WithMany(p => p.HospitalVisits)
+                      .HasForeignKey(hv => hv.PatientId);
+            });
+
+            // Service Configuration
+            modelBuilder.Entity<Service>(entity =>
+            {
+                entity.HasKey(s => s.Id);
+                entity.Property(s => s.Name).IsRequired().HasMaxLength(100);
+                entity.Property(s => s.Category).IsRequired().HasMaxLength(50);
+                entity.Property(s => s.Price).HasColumnType("decimal(18,2)");
+            });
+
+            // Payment Configuration
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.Amount).HasColumnType("decimal(18,2)");
+                entity.Property(p => p.PaymentMethod).IsRequired().HasMaxLength(50);
+
+                // Relationships
+                entity.HasOne(p => p.Patient)
+                      .WithMany(p => p.Payments)
+                      .HasForeignKey(p => p.PatientId);
+
+                entity.HasMany(p => p.Refunds)
+                      .WithOne(r => r.Payment)
+                      .HasForeignKey(r => r.PaymentId);
+            });
+
+            // Refund Configuration
+            modelBuilder.Entity<Refund>(entity =>
+            {
+                entity.HasKey(r => r.Id);
+                entity.Property(r => r.Amount).HasColumnType("decimal(18,2)");
+                entity.Property(r => r.Reason).IsRequired();
+
+                // Relationships
+                entity.HasOne(r => r.Payment)
+                      .WithMany(p => p.Refunds)
+                      .HasForeignKey(r => r.PaymentId);
+            });
+
+            // AssignedTest Configuration
+            modelBuilder.Entity<AssignedTest>(entity =>
+            {
+                entity.HasKey(at => at.Id);
+
+                // Relationships
+                entity.HasOne(at => at.Appointment)
+                      .WithMany(a => a.AssignedTests)
+                      .HasForeignKey(at => at.AppointmentId);
+
+                entity.HasOne(at => at.TestTemplate)
+                      .WithMany()
+                      .HasForeignKey(at => at.TestTemplateId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(at => at.Results)
+                      .WithOne(tr => tr.AssignedTest)
+                      .HasForeignKey(tr => tr.AssignedTestId);
+            });
+
+            // TestTemplate Configuration
+            modelBuilder.Entity<TestTemplate>(entity =>
+            {
+                entity.HasKey(tt => tt.Id);
+                entity.Property(tt => tt.Name).IsRequired();
+                entity.Property(tt => tt.Description).IsRequired();
+
+                // Relationships
+                //entity.HasMany(tt => tt.TestResults)
+                //      .WithOne(tr => tr.TestTemplate)
+                //      .HasForeignKey(tr => tr.TestTemplateId);
+            });
+
+            // TestResult Configuration
+            modelBuilder.Entity<TestResult>(entity =>
+            {
+                entity.HasKey(tr => tr.Id);
+                entity.Property(tr => tr.ParameterName).IsRequired();
+                entity.Property(tr => tr.Value).IsRequired();
+                entity.Property(tr => tr.Unit).IsRequired();
+                entity.Property(tr => tr.ReferenceRange).IsRequired();
+
+                // Relationships
+                entity.HasOne(tr => tr.AssignedTest)
+                      .WithMany(at => at.Results)
+                      .HasForeignKey(tr => tr.AssignedTestId);
+
+                //entity.HasOne(tr => tr.TestTemplate)
+                //      .WithMany(tt => tt.TestResults)
+                //      .HasForeignKey(tr => tr.TestTemplateId);
+            });
+
+            // QueueItem Configuration
+            modelBuilder.Entity<QueueItem>(entity =>
+            {
+                entity.HasKey(qi => qi.Id);
+                entity.Property(qi => qi.Department).IsRequired();
+                entity.Property(qi => qi.Status).HasDefaultValue("Waiting");
+                entity.Property(qi => qi.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+                // Relationships
+                entity.HasOne(qi => qi.Patient)
+                      .WithMany()
+                      .HasForeignKey(qi => qi.PatientId);
             });
         }
-
-        //// Patients module
-        //public DbSet<Patient> Patients { get; set; }
-        //public DbSet<PatientDocument> PatientDocuments { get; set; }
-        //public DbSet<AppToken> Tokens { get; set; }
-
-        //// Appointments module
-        //public DbSet<Appointment> Appointments { get; set; }
-        //public DbSet<MedicalHistory> MedicalHistories { get; set; }
-        //public DbSet<Prescription> Prescriptions { get; set; }
-
-        //// Laboratory module
-        //public DbSet<LabTestType> LabTestTypes { get; set; }
-        //public DbSet<LabOrder> LabOrders { get; set; }
-        //public DbSet<LabOrderDetail> LabOrderDetails { get; set; }
-        //public DbSet<InstrumentalStudy> InstrumentalStudies { get; set; }
-
-        //// Stationary module
-        //public DbSet<Department> Departments { get; set; }
-        //public DbSet<Ward> Wards { get; set; }
-        //public DbSet<Bed> Beds { get; set; }
-        //public DbSet<Hospitalization> Hospitalizations { get; set; }
-        //public DbSet<NurseRound> NurseRounds { get; set; }
-        //public DbSet<PatientDiet> PatientDiets { get; set; }
-
-        //// Payments module
-        //public DbSet<Service> Services { get; set; }
-        //public DbSet<Invoice> Invoices { get; set; }
-        //public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
-        //public DbSet<Payment> Payments { get; set; }
-
-        //// Queue module
-        //public DbSet<PatientQueue> PatientQueues { get; set; }
-
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-        //    base.OnModelCreating(builder);
-        //    //new PatientConfiguration().Configure(modelBuilder.Entity<Blog>());
-        //    builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-        //    builder.ApplyConfigurationsFromAssembly(typeof(PatientConfiguration).Assembly);
-
-        //    // Configure relationships and constraints
-        //    builder.Entity<AppToken>(entity =>
-        //    {
-        //        entity.HasIndex(e => e.UserId).IsUnique();
-        //        entity.Property(e => e.UserId).IsRequired().HasMaxLength(450);
-        //    });
-
-
-        //    //// User relationships
-        //    //// User configuration
-        //    //builder.Entity<User>(entity =>
-        //    //{
-        //    //    entity.HasKey(u => u.Id);
-
-        //    //    // Index for quick lookups by IdentityId
-        //    //    entity.HasIndex(u => u.IdentityId)
-        //    //          .IsUnique();
-
-        //    //    // Relationships
-        //    //    //entity.HasMany(u => u.Appointments)
-        //    //    //      .WithOne(a => a.Patient)
-        //    //    //      .HasForeignKey(a => a.PatientId);
-
-        //    //    //entity.HasMany(u => u.MedicalRecords)
-        //    //    //      .WithOne(mr => mr.Patient)
-        //    //    //      .HasForeignKey(mr => mr.PatientId);
-
-        //    //    // Property configurations
-        //    //    entity.Property(u => u.FirstName).HasMaxLength(100);
-        //    //    entity.Property(u => u.LastName).HasMaxLength(100);
-        //    //    entity.Property(u => u.ProfessionalTitle).HasMaxLength(150);
-        //    //});
-        //    //// Patient relationships
-        //    //builder.Entity<Patient>()
-        //    //    .HasMany(p => p.Appointments)
-        //    //    .WithOne(a => a.Patient)
-        //    //    .HasForeignKey(a => a.PatientID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Patient>()
-        //    //    .HasMany(p => p.Hospitalizations)
-        //    //    .WithOne(h => h.Patient)
-        //    //    .HasForeignKey(h => h.PatientID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Patient>()
-        //    //    .HasMany(p => p.PatientDocuments)
-        //    //    .WithOne(pd => pd.Patient)
-        //    //    .HasForeignKey(pd => pd.PatientID)
-        //    //    .OnDelete(DeleteBehavior.Cascade);
-
-        //    //// Appointment relationships
-        //    ////builder.Entity<Appointment>()
-        //    ////    .HasOne(a => a.Doctor)
-        //    ////    .WithMany()
-        //    ////    .HasForeignKey(a => a.DoctorID)
-        //    ////    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Appointment>()
-        //    //    .HasMany(a => a.MedicalHistories)
-        //    //    .WithOne(mh => mh.Appointment)
-        //    //    .HasForeignKey(mh => mh.AppointmentID)
-        //    //    .OnDelete(DeleteBehavior.Cascade);
-
-        //    //// Medical History relationships
-        //    //builder.Entity<MedicalHistory>()
-        //    //    .HasOne(mh => mh.RecordedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(mh => mh.RecordedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //// Prescription relationships
-        //    //builder.Entity<Prescription>()
-        //    //    .HasOne(p => p.PrescribedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(p => p.PrescribedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //// Laboratory relationships
-        //    //builder.Entity<LabOrder>()
-        //    //    .HasOne(lo => lo.OrderedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(lo => lo.OrderedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<LabOrder>()
-        //    //    .HasMany(lo => lo.LabOrderDetails)
-        //    //    .WithOne(lod => lod.LabOrder)
-        //    //    .HasForeignKey(lod => lod.OrderID)
-        //    //    .OnDelete(DeleteBehavior.Cascade);
-
-        //    //builder.Entity<LabOrderDetail>()
-        //    //    .HasOne(lod => lod.PerformedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(lod => lod.PerformedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<LabOrderDetail>()
-        //    //    .HasOne(lod => lod.TestType)
-        //    //    .WithMany(tt => tt.LabOrderDetails)
-        //    //    .HasForeignKey(lod => lod.TestTypeID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //// Instrumental Studies relationships
-        //    //builder.Entity<InstrumentalStudy>()
-        //    //    .HasOne(isu => isu.OrderedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(isu => isu.OrderedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<InstrumentalStudy>()
-        //    //    .HasOne(isu => isu.PerformedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(isu => isu.PerformedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //// Stationary relationships
-        //    //builder.Entity<Department>()
-        //    //    .HasOne(d => d.HeadDoctor)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(d => d.HeadDoctorID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Ward>()
-        //    //    .HasOne(w => w.Department)
-        //    //    .WithMany(d => d.Wards)
-        //    //    .HasForeignKey(w => w.DepartmentID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Bed>()
-        //    //    .HasOne(b => b.Ward)
-        //    //    .WithMany(w => w.Beds)
-        //    //    .HasForeignKey(b => b.WardID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Hospitalization>()
-        //    //    .HasOne(h => h.Bed)
-        //    //    .WithMany(b => b.Hospitalizations)
-        //    //    .HasForeignKey(h => h.BedID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Hospitalization>()
-        //    //    .HasOne(h => h.AttendingDoctor)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(h => h.AttendingDoctorID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<NurseRound>()
-        //    //    .HasOne(nr => nr.Nurse)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(nr => nr.NurseID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<PatientDiet>()
-        //    //    .HasOne(pd => pd.Hospitalization)
-        //    //    .WithMany(h => h.PatientDiets)
-        //    //    .HasForeignKey(pd => pd.HospitalizationID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //// Payments relationships
-        //    //builder.Entity<Invoice>()
-        //    //    .HasOne(i => i.CreatedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(i => i.CreatedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Invoice>()
-        //    //    .HasMany(i => i.InvoiceDetails)
-        //    //    .WithOne(id => id.Invoice)
-        //    //    .HasForeignKey(id => id.InvoiceID)
-        //    //    .OnDelete(DeleteBehavior.Cascade);
-
-        //    //builder.Entity<Invoice>()
-        //    //    .HasMany(i => i.Payments)
-        //    //    .WithOne(p => p.Invoice)
-        //    //    .HasForeignKey(p => p.InvoiceID)
-        //    //    .OnDelete(DeleteBehavior.Cascade);
-
-        //    //builder.Entity<InvoiceDetail>()
-        //    //    .HasOne(id => id.Service)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(id => id.ServiceID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //builder.Entity<Payment>()
-        //    //    .HasOne(p => p.ReceivedBy)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(p => p.ReceivedByID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //// Queue relationships
-        //    //builder.Entity<PatientQueue>()
-        //    //    .HasOne(pq => pq.Department)
-        //    //    .WithMany()
-        //    //    .HasForeignKey(pq => pq.DepartmentID)
-        //    //    .OnDelete(DeleteBehavior.Restrict);
-
-        //    //// Configure enums and value conversions
-        //    //builder.Entity<Patient>()
-        //    //    .Property(p => p.Gender)
-        //    //    .HasConversion<string>()
-        //    //    .HasMaxLength(1);
-
-        //    //builder.Entity<Ward>()
-        //    //    .Property(w => w.GenderSpecific)
-        //    //    .HasConversion<string>()
-        //    //    .HasMaxLength(1);
-
-        //    //// Configure indexes for performance
-        //    //builder.Entity<Patient>()
-        //    //    .HasIndex(p => new { p.LastName, p.FirstName, p.MiddleName });
-
-        //    //builder.Entity<Patient>()
-        //    //    .HasIndex(p => p.BirthDate);
-
-        //    //builder.Entity<Patient>()
-        //    //    .HasIndex(p => p.InsuranceNumber);
-
-        //    //builder.Entity<Appointment>()
-        //    //    .HasIndex(a => a.PatientID);
-
-        //    //builder.Entity<Appointment>()
-        //    //    .HasIndex(a => a.DoctorID);
-
-        //    //builder.Entity<Appointment>()
-        //    //    .HasIndex(a => new { a.AppointmentDate, a.Status });
-
-        //    //builder.Entity<Hospitalization>()
-        //    //    .HasIndex(h => h.PatientID);
-
-        //    //builder.Entity<Hospitalization>()
-        //    //    .HasIndex(h => h.BedID);
-
-        //    //builder.Entity<Hospitalization>()
-        //    //    .HasIndex(h => h.Status);
-
-        //    //builder.Entity<LabOrder>()
-        //    //    .HasIndex(lo => lo.PatientID);
-
-        //    //builder.Entity<LabOrder>()
-        //    //    .HasIndex(lo => lo.Status);
-
-        //    //builder.Entity<PatientQueue>()
-        //    //    .HasIndex(pq => pq.Status);
-
-        //    //builder.Entity<PatientQueue>()
-        //    //    .HasIndex(pq => pq.DepartmentID);
-        //}
     }
 }
