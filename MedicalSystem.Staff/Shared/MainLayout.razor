@@ -1,33 +1,24 @@
-﻿@inject AuthenticationStateProvider AuthStateProvider
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
-<PageTitle>MedicalSystem.Staff</PageTitle>
-@code {
-    private ClaimsPrincipal? user;
+<PageTitle>Medical System Staff</PageTitle>
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        user = authState.User;
-
-        Console.WriteLine("USER IDENTITY: " + user.Identity?.Name);
-        foreach (var claim in user.Claims)
-        {
-            Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
-        }
-    }
-}
-<div>
-    👤 @user?.Identity?.Name | Role: @user?.FindFirst(ClaimTypes.Role)?.Value
-</div>
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <div class="top-bar">
+            <AuthorizeView>
+                <Authorized>
+                    <span class="username">Welcome!</span>
+                    <button class="btn btn-link logout-btn" @onclick="Logout">Logout</button>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink class="btn btn-link" href="/login">Login</NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -35,3 +26,10 @@
         </article>
     </main>
 </div>
+
+@code {
+    private void Logout()
+    {
+        Navigation.NavigateTo("/logout", forceLoad: true);
+    }
+}

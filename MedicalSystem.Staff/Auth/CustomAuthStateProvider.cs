@@ -4,8 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace MedicalSystem.Staff.Services
+namespace MedicalSystem.Staff.Auth
 {
+
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         private readonly ProtectedLocalStorage _localStorage;
