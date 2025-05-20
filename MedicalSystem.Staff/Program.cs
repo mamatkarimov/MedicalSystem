@@ -16,12 +16,6 @@ builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 builder.Services.AddAuthorizationCore();
 
-//builder.Services.AddScoped<SecureStorageService>();
-//builder.Services.AddScoped<JwtAuthenticationStateProvider>();
-//builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
-//    sp.GetRequiredService<JwtAuthenticationStateProvider>());
-//builder.Services.AddAuthorizationCore();
-
 // Build the app
 var app = builder.Build();
 
