@@ -26,7 +26,7 @@ namespace MedicalSystem.API.Endpoints
             a.Date,
             a.Symptoms,
             a.Status,
-            Patient = a.Patient.Username
+            Patient = a.Patient.User.Username
         })
         .ToListAsync();
 
