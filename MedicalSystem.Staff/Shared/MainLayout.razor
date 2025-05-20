@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Medical System Staff</PageTitle>
 
@@ -12,7 +13,15 @@
         <div class="top-bar">
             <AuthorizeView>
                 <Authorized>
-                    <span class="username">Welcome!</span>
+                    <span class="username">Welcome!, @username!</span>
+                    @if (username is null)
+                    {
+                        <p>Loading...</p>
+                    }
+                    else
+                    {
+                        <p>Welcome, @username!</p>
+                    }
                     <button class="btn btn-link logout-btn" @onclick="Logout">Logout</button>
                 </Authorized>
                 <NotAuthorized>
@@ -28,6 +37,29 @@
 </div>
 
 @code {
+
+    private string? username;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            // Try different claim types for username
+            username = user.FindFirst(c =>
+                c.Type == "unique_name" ||
+                c.Type == "name" ||
+                c.Type == "preferred_username")?.Value;
+
+            if (username == null)
+            {
+                // fallback to Identity.Name
+                username = user.Identity.Name;
+            }
+        }
+    }
+
     private void Logout()
     {
         Navigation.NavigateTo("/logout", forceLoad: true);
