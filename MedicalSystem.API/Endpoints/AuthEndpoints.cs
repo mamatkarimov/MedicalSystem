@@ -18,19 +18,23 @@ public static class AuthEndpoints
     {
         app.MapPost("/api/auth/login", async ([FromServices] AppDbContext db, [FromBody] LoginRequest request) =>
         {
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+            var user = await db.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Username == request.Username);
+
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
                 return Results.Unauthorized();
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         new Claim(ClaimTypes.Name, user.Username)
-        
     };
+
             foreach (var role in user.UserRoles.Select(ur => ur.Role.Name))
             {
-                claims = claims.Append(new Claim(ClaimTypes.Role, role)).ToArray();
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
             var config = app.Services.GetRequiredService<IConfiguration>();
@@ -41,7 +45,7 @@ public static class AuthEndpoints
                 issuer: config["Jwt:Issuer"],
                 audience: config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds);
 
             return Results.Ok(new
@@ -49,6 +53,41 @@ public static class AuthEndpoints
                 token = new JwtSecurityTokenHandler().WriteToken(token)
             });
         });
+
+
+        //    app.MapPost("/api/auth/login", async ([FromServices] AppDbContext db, [FromBody] LoginRequest request) =>
+        //    {
+        //        var user = await db.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+        //        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        //            return Results.Unauthorized();
+
+        //        var claims = new[]
+        //        {
+        //            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        //    new Claim(ClaimTypes.Name, user.Username)
+
+        //};
+        //        foreach (var role in user.UserRoles.Select(ur => ur.Role.Name))
+        //        {
+        //            claims = claims.Append(new Claim(ClaimTypes.Role, role)).ToArray();
+        //        }
+
+        //        var config = app.Services.GetRequiredService<IConfiguration>();
+        //        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+        //        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        //        var token = new JwtSecurityToken(
+        //            issuer: config["Jwt:Issuer"],
+        //            audience: config["Jwt:Audience"],
+        //            claims: claims,
+        //            expires: DateTime.Now.AddHours(1),
+        //            signingCredentials: creds);
+
+        //        return Results.Ok(new
+        //        {
+        //            token = new JwtSecurityTokenHandler().WriteToken(token)
+        //        });
+        //    });
 
         //app.MapPost("/api/auth/register", async ([FromServices] AppDbContext db, [FromBody] LoginRequest request) =>
         //{
