@@ -3,6 +3,9 @@ using MedicalSystem.Infrastructure;
 using MedicalSystem.Application;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MedicalSystem.Domain.Entities;
+using MedicalSystem.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,5 +74,29 @@ app.MapUserEndpoints();
 app.MapAppointmentEndpoints();
 // Temporary minimal endpoint to test
 app.MapGet("/", () => "MedicalSystem API is running").AllowAnonymous();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    var roles = new[] {   "Admin",
+"Doctor",
+"Nurse",
+"Reception",
+"Cashier",
+"Laboratory",
+"ChefDoctor",
+"Patient" };
+
+    foreach (var roleName in roles)
+    {
+        if (!await db.Roles.AnyAsync(r => r.Name == roleName))
+        {
+            db.Roles.Add(new Role { Name = roleName });
+        }
+    }
+
+    await db.SaveChangesAsync();
+}
 
 app.Run();

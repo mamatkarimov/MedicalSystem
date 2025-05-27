@@ -4,6 +4,7 @@ using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicalSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250527061404_AddRolesSeed")]
+    partial class AddRolesSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -291,6 +294,48 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("df06bd00-00a9-483c-8fa1-838f03349213"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("4e264931-d794-4eee-9886-9c6ff9992a37"),
+                            Name = "Doctor"
+                        },
+                        new
+                        {
+                            Id = new Guid("f1d9274d-df5a-4ab1-9642-e91958febf9a"),
+                            Name = "Nurse"
+                        },
+                        new
+                        {
+                            Id = new Guid("1a1d1760-8f1d-41c5-aad0-210e8e8a8038"),
+                            Name = "Reception"
+                        },
+                        new
+                        {
+                            Id = new Guid("d487a27c-f2fd-4cb2-a2ec-6b05b961e8b7"),
+                            Name = "Cashier"
+                        },
+                        new
+                        {
+                            Id = new Guid("73672637-2b13-4157-bab4-9a469ccfb877"),
+                            Name = "Laboratory"
+                        },
+                        new
+                        {
+                            Id = new Guid("3bdd09d5-a1cd-42f7-8b2e-346c3680b9e2"),
+                            Name = "ChefDoctor"
+                        },
+                        new
+                        {
+                            Id = new Guid("07b88d68-d966-408d-bea5-f16ff0ae80e0"),
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Service", b =>
@@ -375,6 +420,11 @@ namespace MedicalSystem.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");

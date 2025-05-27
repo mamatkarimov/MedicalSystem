@@ -29,13 +29,24 @@ namespace MedicalSystem.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
-            // User Configuration
-            modelBuilder.Entity<User>(entity =>
+            //modelBuilder.Entity<Role>().HasData(
+            //       new Role { Id = Guid.NewGuid(), Name = "Admin" },
+            //       new Role { Id = Guid.NewGuid(), Name = "Doctor" },
+            //       new Role { Id = Guid.NewGuid(), Name = "Nurse" },
+            //       new Role { Id = Guid.NewGuid(), Name = "Reception" },
+            //       new Role { Id = Guid.NewGuid(), Name = "Cashier" },
+            //       new Role { Id = Guid.NewGuid(), Name = "Laboratory" },
+            //       new Role { Id = Guid.NewGuid(), Name = "ChefDoctor" },
+            //       new Role { Id = Guid.NewGuid(), Name = "User" }
+            //   );             
+
+        // User Configuration
+        modelBuilder.Entity<User>(entity =>
                 {
                     entity.HasKey(u => u.Id);
                     entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
                     entity.Property(u => u.PasswordHash).IsRequired();
-                    entity.Property(u => u.FullName).IsRequired().HasMaxLength(100);
+                    //entity.Property(u => u.FullName).IsRequired().HasMaxLength(100);
                     entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
                     entity.Property(u => u.IsActive).HasDefaultValue(true);
                     //entity.Property(u => u.Role).HasMaxLength(50);

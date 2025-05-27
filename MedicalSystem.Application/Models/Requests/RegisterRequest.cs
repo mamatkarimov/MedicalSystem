@@ -6,24 +6,16 @@ namespace MedicalSystem.Application.Models.Requests
     public class RegisterRequest
     {
         [Required]
-        public string Username { get; set; }
+        public string Username { get; set; } = default!;
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; }        
 
         [Required]
-        public string FirstName { get; set; }
+        public string Password { get; set; } = default!;
 
         [Required]
-        public string LastName { get; set; }
-
-        public string MiddleName { get; set; }
-
-        [Required]
-        public string Password { get; set; }
-
-        [Required]
-        public string Role { get; set; }
+        public string Role { get; set; } = default!; // "Doctor", "Patient", etc.       
     }
 }

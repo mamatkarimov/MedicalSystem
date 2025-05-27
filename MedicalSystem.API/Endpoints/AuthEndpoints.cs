@@ -8,6 +8,7 @@ using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Domain.Enums;
+using MedicalSystem.Application.Models.Requests;
 
 namespace MedicalSystem.API.Endpoints;
 
@@ -49,38 +50,69 @@ public static class AuthEndpoints
             });
         });
 
-        app.MapPost("/api/auth/register", async ([FromServices] AppDbContext db, [FromBody] LoginRequest request) =>
+        //app.MapPost("/api/auth/register", async ([FromServices] AppDbContext db, [FromBody] LoginRequest request) =>
+        //{
+        //    if (await db.Users.AnyAsync(u => u.Username == request.Username))
+        //        return Results.BadRequest("Username already taken");
+
+        //    var roleName = string.IsNullOrEmpty(request.Role) ? UserRoles.User : request.Role;
+
+        //    // Find role by name
+        //    var role = await db.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+        //    if (role == null)
+        //        return Results.BadRequest("Invalid role");
+
+
+        //    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        //    var user = new User
+        //    {
+        //        Username = request.Username,
+        //        PasswordHash = hashedPassword,
+        //        UserRoles = new List<UserRole>
+        //                                {
+        //                                    new UserRole
+        //                                    {
+        //                                        Role = role
+        //                                    }
+        //                                }
+        //    };
+
+        //    db.Users.Add(user);
+        //    await db.SaveChangesAsync();
+
+        //    return Results.Ok("User registered");
+        //});
+
+        app.MapPost("/api/auth/register", async ([FromServices] AppDbContext db, [FromBody] RegisterRequest request) =>
         {
             if (await db.Users.AnyAsync(u => u.Username == request.Username))
                 return Results.BadRequest("Username already taken");
 
-            var roleName = string.IsNullOrEmpty(request.Role) ? UserRoles.User : request.Role;
-
-            // Find role by name
-            var role = await db.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+            var role = await db.Roles.FirstOrDefaultAsync(r => r.Name == request.Role);
             if (role == null)
                 return Results.BadRequest("Invalid role");
 
-
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
             var user = new User
             {
                 Username = request.Username,
                 PasswordHash = hashedPassword,
-                UserRoles = new List<UserRole>
-                                        {
-                                            new UserRole
-                                            {
-                                                Role = role
-                                            }
-                                        }
+                Email = request.Email
             };
+
+            user.UserRoles.Add(new UserRole
+            {
+                User = user,
+                Role = role
+            });
 
             db.Users.Add(user);
             await db.SaveChangesAsync();
 
-            return Results.Ok("User registered");
+            return Results.Ok(new { user.Id, user.Username, Role = request.Role });
         });
+
 
         app.MapGet("/api/doctor/data", (ClaimsPrincipal user) =>
         {
