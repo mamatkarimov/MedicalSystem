@@ -68,12 +68,12 @@ public static class AuthEndpoints
                 Username = request.Username,
                 PasswordHash = hashedPassword,
                 UserRoles = new List<UserRole>
-        {
-            new UserRole
-            {
-                Role = role
-            }
-        }
+                                        {
+                                            new UserRole
+                                            {
+                                                Role = role
+                                            }
+                                        }
             };
 
             db.Users.Add(user);
