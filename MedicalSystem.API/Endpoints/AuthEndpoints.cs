@@ -24,9 +24,13 @@ public static class AuthEndpoints
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, user.Username),
-        new Claim(ClaimTypes.Role, user.Role)
+        new Claim(ClaimTypes.Name, user.Username)
+        
     };
+            foreach (var role in user.UserRoles.Select(ur => ur.Role.Name))
+            {
+                claims = claims.Append(new Claim(ClaimTypes.Role, role)).ToArray();
+            }
 
             var config = app.Services.GetRequiredService<IConfiguration>();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
@@ -50,14 +54,26 @@ public static class AuthEndpoints
             if (await db.Users.AnyAsync(u => u.Username == request.Username))
                 return Results.BadRequest("Username already taken");
 
-            var role = string.IsNullOrEmpty(request.Role) ? UserRoles.User : request.Role;
+            var roleName = string.IsNullOrEmpty(request.Role) ? UserRoles.User : request.Role;
+
+            // Find role by name
+            var role = await db.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+            if (role == null)
+                return Results.BadRequest("Invalid role");
+
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
             var user = new User
             {
                 Username = request.Username,
                 PasswordHash = hashedPassword,
+                UserRoles = new List<UserRole>
+        {
+            new UserRole
+            {
                 Role = role
+            }
+        }
             };
 
             db.Users.Add(user);
@@ -89,7 +105,7 @@ public static class AuthEndpoints
                 .Select(u => new UserInfoResponse
                 {
                     Username = u.Username,
-                    Role = u.Role
+                    UserRoles = u.UserRoles
                 })
                 .FirstOrDefaultAsync();
 

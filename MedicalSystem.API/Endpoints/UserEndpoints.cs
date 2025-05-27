@@ -12,11 +12,13 @@ public static class UserEndpoints
         app.MapGet("/api/users", async (AppDbContext db) =>
         {
             var users = await db.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
                 .Select(u => new UserListItem
                 {
                     Id = u.Id,
                     Username = u.Username,
-                    Role = u.Role
+                    Role = string.Join(", ", u.UserRoles.Select(ur => ur.Role.Name))
                 })
                 .ToListAsync();
 
@@ -33,7 +35,7 @@ public static class UserEndpoints
             if (user is null)
                 return Results.NotFound("User not found");
 
-            user.Role = request.Role;
+            //user.UserRoles = request.;
             await db.SaveChangesAsync();
 
             return Results.Ok($"User role updated to {request.Role}");

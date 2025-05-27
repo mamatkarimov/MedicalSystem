@@ -38,7 +38,7 @@ namespace MedicalSystem.Infrastructure.Persistence
                     entity.Property(u => u.FullName).IsRequired().HasMaxLength(100);
                     entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
                     entity.Property(u => u.IsActive).HasDefaultValue(true);
-                    entity.Property(u => u.Role).HasMaxLength(50);
+                    //entity.Property(u => u.Role).HasMaxLength(50);
 
                     // Indexes
                     entity.HasIndex(u => u.Username).IsUnique();

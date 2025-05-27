@@ -21,14 +21,16 @@ namespace MedicalSystem.API.Controllers
         public async Task<IActionResult> GetDoctors()
         {
             var doctors = await _context.Users
-                .Where(u => u.UserRoles.con == "Doctor")
-                .Select(u => new
-                {
-                    u.Id,
-                    u.Username,
-                    u.Role
-                })
-                .ToListAsync();
+    .Include(u => u.UserRoles)
+        .ThenInclude(ur => ur.Role)
+    .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Doctor"))
+    .Select(u => new
+    {
+        u.Id,
+        u.Username,
+        Role = string.Join(", ", u.UserRoles.Select(ur => ur.Role.Name))        
+    })
+    .ToListAsync();
 
             return Ok(doctors);
         }

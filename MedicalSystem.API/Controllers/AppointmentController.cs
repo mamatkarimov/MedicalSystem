@@ -1,7 +1,9 @@
 ﻿using MedicalSystem.Domain.Entities;
+using MedicalSystem.Domain.Enums;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace MedicalSystem.API.Controllers
@@ -28,8 +30,12 @@ namespace MedicalSystem.API.Controllers
                 if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var patientId))
                     return Unauthorized("User ID not found or invalid");
 
-                var doctor = await _context.Users.FindAsync(request.DoctorId);
-                if (doctor == null || doctor.Role != "Doctor")
+                var doctor = await _context.Users
+    .Include(u => u.UserRoles)
+        .ThenInclude(ur => ur.Role)
+    .FirstOrDefaultAsync(u => u.Id == request.DoctorId);
+
+                if (doctor == null || !doctor.UserRoles.Any(r => r.Role.Name == UserRoles.Doctor))
                     return BadRequest("Invalid doctor ID");
 
                 var appointment = new Appointment
