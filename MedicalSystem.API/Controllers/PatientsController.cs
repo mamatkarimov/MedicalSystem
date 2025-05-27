@@ -19,12 +19,12 @@ public class PatientsController : ControllerBase
         _context = context;
     }
 
-    [Authorize(Roles = "Admin,Reception")]
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
-    {
-        return await _context.Patients.Where(p => p.IsActive).ToListAsync();
-    }
+    //[Authorize(Roles = "Admin,Reception")]
+    //[HttpGet]
+    //public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
+    //{
+    //    return await _context.Patients.Where(p => p.IsActive).ToListAsync();
+    //}
 
     [Authorize(Roles = "Admin,Reception")]
     [HttpGet("{id}")]
@@ -49,7 +49,7 @@ public class PatientsController : ControllerBase
         {
             FirstName = request.FirstName,
             LastName = request.LastName,  
-            DateOfBirth = request.BirthDate,
+            DateOfBirth = request.DateOfBirth,
             Gender = request.Gender            
         };
 

@@ -30,19 +30,10 @@
     <Compile Remove="Entities\Prescription.cs" />
     <Compile Remove="Entities\Service.cs" />
     <Compile Remove="Entities\Ward.cs" />
-    <Compile Remove="Repositories\ITokenStore.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Repositories\ITokenStore.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
   </ItemGroup>
 
 </Project>

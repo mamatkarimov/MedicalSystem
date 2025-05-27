@@ -1,0 +1,41 @@
+﻿@page "/patients"
+@using MedicalSystem.Application.Models.Responses
+@inject HttpClient Http
+
+<h3>Registered Patients</h3>
+
+@if (patients == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Birth Date</th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in patients)
+            {
+                <tr>
+                    <td>@p.FullName</td>
+                    <td>@p.DateOfBirth.ToShortDateString()</td>
+                    <td>@p.Gender</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<PatientListItem>? patients;
+
+    protected override async Task OnInitializedAsync()
+    {
+        patients = await Http.GetFromJsonAsync<List<PatientListItem>>("api/patients");
+    }
+}

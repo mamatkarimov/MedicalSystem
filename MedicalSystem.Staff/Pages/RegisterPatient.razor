@@ -1,0 +1,41 @@
+﻿@page "/register-patient"
+@using MedicalSystem.Application.Models.Requests
+@inject HttpClient Http
+
+<h3>Register Patient</h3>
+
+<EditForm Model="@request" OnValidSubmit="Register">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="request.FirstName" placeholder="First Name" />
+    <InputText @bind-Value="request.LastName" placeholder="Last Name" />
+    <InputDate @bind-Value="request.DateOfBirth" />
+    <InputText @bind-Value="request.Gender" placeholder="Gender" /> 
+
+    <button type="submit">Register</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="mt-3 alert alert-info">@message</div>
+}
+
+@code {
+    private RegisterPatientRequest request = new();
+    private string? message;
+
+    private async Task Register()
+    {
+        var response = await Http.PostAsJsonAsync("api/patients", request);
+        message = await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            // Maybe show a success message or navigate
+        }
+        else
+        {
+            // Show error
+        }
+    }
+}

@@ -15,6 +15,7 @@ namespace MedicalSystem.Domain.Enums
         public const string Cashier = "Cashier";
         public const string Lab = "Laboratory";
         public const string ChefDoctor = "ChefDoctor";
+        public const string Patient = "Patient";
         public const string User = "User"; // Default
     }
 }

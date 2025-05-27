@@ -49,6 +49,17 @@ namespace MedicalSystem.Domain.Entities
         public ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
     }
 
+    public class StaffProfile
+    {
+        public int Id { get; set; }
+        public Guid? UserId { get; set; }
+        public User? User { get; set; }
+        public string Position { get; set; } // Example: "Doctor", "Nurse", "Admin", etc.
+        public string? Department { get; set; } // Optional: e.g., "Cardiology"
+
+        
+    }
+
     public class Appointment
     {
         public Guid Id { get; set; }

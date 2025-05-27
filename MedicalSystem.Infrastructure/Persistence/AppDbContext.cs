@@ -1,6 +1,4 @@
 using MedicalSystem.Domain.Entities;
-using MedicalSystem.Infrastructure.Data.Configurations;
-using MedicalSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedicalSystem.Infrastructure.Persistence
@@ -14,6 +12,7 @@ namespace MedicalSystem.Infrastructure.Persistence
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Patient> Patients { get; set; }
+        public DbSet<StaffProfile> StaffProfiles { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
         public DbSet<HospitalVisit> HospitalVisits { get; set; }
@@ -27,39 +26,26 @@ namespace MedicalSystem.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);           
 
-            //modelBuilder.Entity<Role>().HasData(
-            //       new Role { Id = Guid.NewGuid(), Name = "Admin" },
-            //       new Role { Id = Guid.NewGuid(), Name = "Doctor" },
-            //       new Role { Id = Guid.NewGuid(), Name = "Nurse" },
-            //       new Role { Id = Guid.NewGuid(), Name = "Reception" },
-            //       new Role { Id = Guid.NewGuid(), Name = "Cashier" },
-            //       new Role { Id = Guid.NewGuid(), Name = "Laboratory" },
-            //       new Role { Id = Guid.NewGuid(), Name = "ChefDoctor" },
-            //       new Role { Id = Guid.NewGuid(), Name = "User" }
-            //   );             
+            // User Configuration
+            modelBuilder.Entity<User>(entity =>
+                    {
+                        entity.HasKey(u => u.Id);
+                        entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
+                        entity.Property(u => u.PasswordHash).IsRequired();
+                        entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
+                        entity.Property(u => u.IsActive).HasDefaultValue(true);
 
-        // User Configuration
-        modelBuilder.Entity<User>(entity =>
-                {
-                    entity.HasKey(u => u.Id);
-                    entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
-                    entity.Property(u => u.PasswordHash).IsRequired();
-                    //entity.Property(u => u.FullName).IsRequired().HasMaxLength(100);
-                    entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
-                    entity.Property(u => u.IsActive).HasDefaultValue(true);
-                    //entity.Property(u => u.Role).HasMaxLength(50);
+                        // Indexes
+                        entity.HasIndex(u => u.Username).IsUnique();
+                        entity.HasIndex(u => u.Email).IsUnique();
 
-                    // Indexes
-                    entity.HasIndex(u => u.Username).IsUnique();
-                    entity.HasIndex(u => u.Email).IsUnique();
-
-                    // Relationships
-                    entity.HasMany(u => u.UserRoles)
-                          .WithOne(ur => ur.User)
-                          .HasForeignKey(ur => ur.UserId);
-                });
+                        // Relationships
+                        entity.HasMany(u => u.UserRoles)
+                              .WithOne(ur => ur.User)
+                              .HasForeignKey(ur => ur.UserId);
+                    });
 
             // Role Configuration
             modelBuilder.Entity<Role>(entity =>
@@ -118,6 +104,22 @@ namespace MedicalSystem.Infrastructure.Persistence
                 entity.HasMany(p => p.MedicalRecords)
                       .WithOne(mr => mr.Patient)
                       .HasForeignKey(mr => mr.PatientId);
+            });
+
+            // Patient Configuration
+            modelBuilder.Entity<StaffProfile>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+                //entity.Property(p => p.FirstName).IsRequired().HasMaxLength(50);
+                //entity.Property(p => p.LastName).IsRequired().HasMaxLength(50);
+                //entity.Property(p => p.Gender).IsRequired().HasMaxLength(10);
+
+                // Relationships
+                entity.HasOne(p => p.User)
+                      .WithMany()
+                      .HasForeignKey(p => p.UserId)
+                      .IsRequired(false)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Appointment Configuration

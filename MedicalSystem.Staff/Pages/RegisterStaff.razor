@@ -1,0 +1,61 @@
+﻿@page "/register-staff"
+@inject HttpClient Http
+@using MedicalSystem.Application.Models.Requests
+
+<h3>Register Staff</h3>
+
+<EditForm Model="@staff" OnValidSubmit="SubmitRegistration">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Username:</label>
+        <InputText class="form-control" @bind-Value="staff.Username" />
+    </div>
+
+    <div class="mb-3">
+        <label>Password:</label>
+        <InputText type="password" class="form-control" @bind-Value="staff.Password" />
+    </div>
+
+    <div class="mb-3">
+        <label>Role:</label>
+        <InputSelect class="form-select" @bind-Value="staff.Role">
+            <option>Doctor</option>
+            <option>Nurse</option>
+            <option>Reception</option>
+            <option>Cashier</option>
+            <option>Laboratory</option>
+            <option>ChefDoctor</option>
+            <option>Admin</option>
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label>Department (optional):</label>
+        <InputText class="form-control" @bind-Value="staff.Department" />
+    </div>
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <InputText class="form-control" @bind-Value="staff.Email" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="mt-3 alert alert-info">@message</div>
+}
+
+@code {
+    private RegisterStaffRequest staff = new();
+    private string? message;
+
+    private async Task SubmitRegistration()
+    {
+        var response = await Http.PostAsJsonAsync("api/auth/register-staff", staff);
+        message = await response.Content.ReadAsStringAsync();
+    }
+}

@@ -71,6 +71,7 @@ app.UseAuthorization();
 app.MapControllers(); // for attribute routing if needed
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapPatientEndpoints();
 app.MapAppointmentEndpoints();
 // Temporary minimal endpoint to test
 app.MapGet("/", () => "MedicalSystem API is running").AllowAnonymous();
