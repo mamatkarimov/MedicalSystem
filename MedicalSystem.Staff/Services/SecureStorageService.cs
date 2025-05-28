@@ -29,5 +29,22 @@ namespace MedicalSystem.Staff.Services
         {
             await _sessionStorage.DeleteAsync(TokenKey);
         }
+
+        public async Task<string> GetTokenAsync()
+        {
+            //return await _sessionStorage.GetAsync<string>(TokenKey);
+            var result = await _sessionStorage.GetAsync<string>(TokenKey);
+            return result.Success ? result.Value : null;
+        }
+
+        public async Task SetTokenAsync(string token)
+        {
+            await _sessionStorage.SetAsync("authToken", token);
+        }
+
+        public async Task RemoveTokenAsync()
+        {
+            await _sessionStorage.DeleteAsync("authToken");
+        }
     }
 }

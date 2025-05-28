@@ -32,30 +32,40 @@ builder.Services.AddAuthentication("Bearer")
 
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = key // ✅ MUST MATCH the key used in AuthEndpoints
+            IssuerSigningKey = key 
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Patient", policy =>
-    {
-        policy.RequireRole("Patient");
-    });
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("Patient", policy =>
+//    {
+//        policy.RequireRole("Patient");
+//    });
 
-    // You may add other roles too for later use
-    options.AddPolicy("Doctor", policy =>
-    {
-        policy.RequireRole("Doctor");
-    });
-});
+//    // You may add other roles too for later use
+//    options.AddPolicy("Doctor", policy =>
+//    {
+//        policy.RequireRole("Doctor");
+//    });
+//});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
-
+app.UseCors("AllowAll");
 
 // Configure middleware
 if (app.Environment.IsDevelopment())

@@ -1,27 +1,27 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text.Json;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace MedicalSystem.Staff.Auth
 {
 
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
-        private readonly ProtectedLocalStorage _localStorage;
+        private readonly ProtectedLocalStorage _localStorage;       
 
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
         public CustomAuthStateProvider(ProtectedLocalStorage localStorage)
         {
             _localStorage = localStorage;
+            
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             try
-            {
+            {                
                 var tokenResult = await _localStorage.GetAsync<string>("authToken");
                 var token = tokenResult.Success ? tokenResult.Value : null;
 
@@ -47,6 +47,12 @@ namespace MedicalSystem.Staff.Auth
             var user = new ClaimsPrincipal(identity);
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        }
+
+        public void NotifyUserAuthentication()
+        {
+            var authState = GetAuthenticationStateAsync();
+            NotifyAuthenticationStateChanged(authState);
         }
 
         public void NotifyUserLogout()
