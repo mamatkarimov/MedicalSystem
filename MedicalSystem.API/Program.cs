@@ -1,5 +1,4 @@
-﻿using MedicalSystem.API.Endpoints;
-using MedicalSystem.Infrastructure;
+﻿using MedicalSystem.Infrastructure;
 using MedicalSystem.Application;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -69,10 +68,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers(); // for attribute routing if needed
-app.MapAuthEndpoints();
-app.MapUserEndpoints();
-app.MapPatientEndpoints();
-app.MapAppointmentEndpoints();
 // Temporary minimal endpoint to test
 app.MapGet("/", () => "MedicalSystem API is running").AllowAnonymous();
 

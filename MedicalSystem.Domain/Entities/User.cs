@@ -67,7 +67,7 @@ namespace MedicalSystem.Domain.Entities
         public Patient Patient { get; set; } = default!;
         public Guid DoctorId { get; set; }
         public User Doctor { get; set; } = default!;
-        public DateTime Date { get; set; }
+        public DateTime AppointmentDate { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Status { get; set; } = "Scheduled";

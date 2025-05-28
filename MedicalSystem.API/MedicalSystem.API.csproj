@@ -7,15 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\AppointmentsController.cs" />
-    <Compile Remove="Controllers\AuthController.cs" />
     <Compile Remove="Controllers\LaboratoryController.cs" />
     <Compile Remove="Controllers\MedicalRecordsController.cs" />
     <Compile Remove="Controllers\PaymentsController.cs" />
     <Compile Remove="Controllers\QueueController.cs" />
     <Compile Remove="Controllers\ReportsController.cs" />
     <Compile Remove="Controllers\StationaryController.cs" />
-    <Compile Remove="Controllers\UsersController.cs" />
     <Compile Remove="Controllers\ValuesController.cs" />
   </ItemGroup>
 
@@ -35,11 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BackgroundServices\" />
     <Folder Include="Configurations\" />
-    <Folder Include="EventHandlers\" />
-    <Folder Include="Infrastructure\" />
-    <Folder Include="Mapping\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

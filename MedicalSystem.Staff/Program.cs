@@ -2,6 +2,7 @@
 using MedicalSystem.Staff.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +17,32 @@ builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 builder.Services.AddAuthorizationCore();
 
-builder.Services.AddHttpClient("API", client =>
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
+
+builder.Services.AddScoped(sp =>
 {
-    client.BaseAddress = new Uri("http://localhost:5074/"); // Use your actual API base URL
+    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var accessToken = httpContextAccessor.HttpContext?.Session.GetString("access_token");
+
+    var client = new HttpClient
+    {
+        BaseAddress = new Uri("http://localhost:5074") // adjust as needed
+    };
+
+    if (!string.IsNullOrEmpty(accessToken))
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+    return client;
 });
 
-// Register default HttpClient for injection
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));
+//builder.Services.AddHttpClient("API", client =>
+//{
+//    client.BaseAddress = new Uri("http://localhost:5074/"); // Use your actual API base URL
+//});
+
+//// Register default HttpClient for injection
+//builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));
 
 
 // Build the app
@@ -34,6 +54,10 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+app.UseSession();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
