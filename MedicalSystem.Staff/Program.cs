@@ -18,7 +18,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStatePr
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSession();
+
 
 builder.Services.AddScoped(sp =>
 {
@@ -36,14 +36,7 @@ builder.Services.AddScoped(sp =>
     return client;
 });
 
-//builder.Services.AddHttpClient("API", client =>
-//{
-//    client.BaseAddress = new Uri("http://localhost:5074/"); // Use your actual API base URL
-//});
-
-//// Register default HttpClient for injection
-//builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));
-
+builder.Services.AddSession();
 
 // Build the app
 var app = builder.Build();

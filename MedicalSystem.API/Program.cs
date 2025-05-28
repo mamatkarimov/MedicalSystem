@@ -20,7 +20,7 @@ var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://localhost:5001"; // Change as needed
+        options.Authority = "http://localhost:5074"; // Change as needed
         options.RequireHttpsMetadata = false;
         options.Audience = "medical_api";
         options.TokenValidationParameters = new TokenValidationParameters
