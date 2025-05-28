@@ -14,33 +14,42 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddScoped<SecureStorageService>();
-builder.Services.AddScoped<ProtectedSessionStorage>();
-builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
+builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddHttpClient("AuthHttpClient", client =>
+builder.Services.AddHttpClient<AuthService>(options =>
 {
-    client.BaseAddress = new Uri("http://localhost:5074");
-}).AddHttpMessageHandler<HttpInterceptor>();
-
-builder.Services.AddScoped(sp =>
-{
-    var client = new HttpClient
-    {
-        BaseAddress = new Uri("http://localhost:5074") // adjust as needed
-    };
-
-    var storage = sp.GetRequiredService<SecureStorageService>();
-    var token = storage.GetTokenAsync().GetAwaiter().GetResult();
-    
-    if (!string.IsNullOrEmpty(token))
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-    return client;
+    options.BaseAddress = new Uri("http://localhost:5074/");
 });
+
+//builder.Services.AddHttpClient("AuthHttpClient", client =>
+//{
+//    client.BaseAddress = new Uri("http://localhost:5074");
+//}).AddHttpMessageHandler<HttpInterceptor>();
+
+
+//builder.Services.AddScoped(sp =>
+//    sp.GetRequiredService<IHttpClientFactory>().CreateClient("AuthHttpClient"));
+
+//builder.Services.AddScoped(sp =>
+//{
+//    var client = new HttpClient
+//    {
+//        BaseAddress = new Uri("http://localhost:5074") // adjust as needed
+//    };
+
+//    var storage = sp.GetRequiredService<SecureStorageService>();
+//    var token = storage.GetTokenAsync().GetAwaiter().GetResult();
+    
+//    if (!string.IsNullOrEmpty(token))
+//        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+//    return client;
+//});
 
 builder.Services.AddSession();
 

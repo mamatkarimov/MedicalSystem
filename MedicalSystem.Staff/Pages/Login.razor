@@ -1,84 +1,48 @@
-﻿@page "/login"
-@using MedicalSystem.Staff.Auth
+﻿@page "/auth/login"
+@using Blazored.SessionStorage
 @using MedicalSystem.Staff.Services
-@inject HttpClient Http
-@inject SecureStorageService SecureStorageService
-@inject AuthenticationStateProvider AuthStateProvider
-@inject NavigationManager Navigation
+@using MedicalSystem.Staff.Auth
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+@inject ISessionStorageService SessionStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3>Login</h3>
-
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="mb-3">
-        <label>Username</label>
-        <InputText class="form-control" @bind-Value="loginModel.Username" />
+<EditForm class="new-blog-form" Model="@authRequest" OnValidSubmit="HandleValidSubmit">
+    <div class="form-group row">
+        <label for="username" class="col-sm-2 col-form-label">Username</label>
+        <div class="col-sm-10">
+            <input type="text" @bind="authRequest!.Username" class=" form-control" id="username" placeholder="Username">
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Password</label>
-        <InputText class="form-control" @bind-Value="loginModel.Password" type="password" />
+    <div class="form-group row">
+        <label for="password" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+            <input type="password" @bind="authRequest!.Password" class="form-control" id="password"
+                   placeholder="Password">
+        </div>
     </div>
-
-    <button class="btn btn-primary" type="submit">Login</button>
-
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger mt-3">@errorMessage</div>
-    }
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <a href="/auth/register" class="btn btn-secondary">New User? Register</a>
+        </div>
+    </div>
 </EditForm>
-
 @code {
-    private LoginModel loginModel = new();
-    private string? errorMessage;
-
-    private async Task HandleLogin()
+    private AuthRequest? authRequest = new AuthRequest();
+    private async void HandleValidSubmit()
     {
-        try
+        var authResponse = await AuthService.Login(authRequest!);
+        if (authResponse != null)
         {
-            var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-                if (result is not null)
-                {
-                    SecureStorageService.SetToken(result.Token);
-
-                    // Cast to your custom provider and notify authentication
-                    if (AuthStateProvider is JwtAuthenticationStateProvider jwtProvider)
-                    {
-                        jwtProvider.NotifyUserAuthentication(result.Token);
-                    }
-
-                    Navigation.NavigateTo("/");
-                }
-                else
-                {
-                    errorMessage = "Login failed: empty response";
-                }
-            }
-            else
-            {
-                errorMessage = "Invalid username or password.";
-            }
+            await SessionStorage.SetItemAsync("token", authResponse.Token);
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).AuthenticateUser(authResponse.Token!);
+            NavigationManager.NavigateTo("/");
         }
-        catch (Exception ex)
-        {
-            errorMessage = "Login error: " + ex.Message;
-        }
-    }
-
-    public class LoginModel
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
-    public class TokenResponse
-    {
-        public string Token { get; set; } = string.Empty;
     }
 }

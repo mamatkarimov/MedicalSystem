@@ -1,5 +1,5 @@
 ﻿@page "/register-staff"
-@inject HttpClient Http
+@inject IHttpClientFactory _httpClientFactory
 @using MedicalSystem.Application.Models.Requests
 
 <h3>Register Staff</h3>
@@ -53,9 +53,17 @@
     private RegisterStaffRequest staff = new();
     private string? message;
 
+    private HttpClient _http;
+
+    protected override void OnInitialized()
+    {
+        _http = _httpClientFactory.CreateClient("AuthHttpClient");
+    }
+
+
     private async Task SubmitRegistration()
     {
-        var response = await Http.PostAsJsonAsync("api/auth/register-staff", staff);
+        var response = await _http.PostAsJsonAsync("api/auth/register-staff", staff);
         message = await response.Content.ReadAsStringAsync();
     }
 }

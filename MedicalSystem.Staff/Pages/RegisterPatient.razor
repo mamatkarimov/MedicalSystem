@@ -1,6 +1,6 @@
 ﻿@page "/register-patient"
 @using MedicalSystem.Application.Models.Requests
-@inject HttpClient Http
+@inject IHttpClientFactory _httpClientFactory
 
 <h3>Register Patient</h3>
 
@@ -24,10 +24,16 @@
 @code {
     private RegisterPatientRequest request = new();
     private string? message;
+    private HttpClient _http;
+
+    protected override void OnInitialized()
+    {
+        _http = _httpClientFactory.CreateClient("AuthHttpClient");
+    }
 
     private async Task Register()
     {
-        var response = await Http.PostAsJsonAsync("api/patients", request);
+        var response = await _http.PostAsJsonAsync("api/patients", request);
         message = await response.Content.ReadAsStringAsync();
         if (response.IsSuccessStatusCode)
         {
