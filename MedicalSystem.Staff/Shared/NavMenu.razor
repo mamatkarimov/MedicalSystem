@@ -1,4 +1,10 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using MedicalSystem.Staff.Auth
+@using MedicalSystem.Staff.Services
+@inject SecureStorageService SecureStorageService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">MedicalSystem.Staff</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -39,6 +45,39 @@
                 <span class="oi oi-plus"></span> Register Staff
             </NavLink>
         </div>
+        <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+            <nav class="flex-column">
+                <!-- Add this inside your navigation bar, for example, after the "Home" link -->
+                <div class="nav-item px-3">
+                    <AuthorizeView>
+                        <Authorized>
+                            <NavLink class="nav-link" href="" @onclick="Logout">
+                                <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                            </NavLink>
+                        </Authorized>
+                        <NotAuthorized>
+                            <NavLink class="nav-link" href="" @onclick="Login">
+                                <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                            </NavLink>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="blogposts">
+                                <span class="oi oi-signpost" aria-hidden="true"></span> Manage Posts
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+            </nav>
+        </div>
     </nav>
 </div>
 
@@ -50,5 +89,17 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task Logout()
+    {
+        await SecureStorageService.RemoveTokenAsync();
+        ((JwtAuthenticationStateProvider)AuthStateProvider).NotifyUserLogout();
+        Navigation.NavigateTo("/auth/login");
+    }
+
+    private void Login()
+    {
+        Navigation.NavigateTo("/auth/login");
     }
 }

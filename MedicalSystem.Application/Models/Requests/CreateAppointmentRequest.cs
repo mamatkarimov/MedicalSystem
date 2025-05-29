@@ -6,15 +6,15 @@ namespace MedicalSystem.Application.Models.Requests
     public class CreateAppointmentRequest
 {
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     [Required]
-    public string DoctorID { get; set; }
+    public Guid DoctorID { get; set; }
     
     [Required]
     public DateTime AppointmentDate { get; set; }
     
-    public string Reason { get; set; }
+    public string Symptoms { get; set; }
 
 }
 }

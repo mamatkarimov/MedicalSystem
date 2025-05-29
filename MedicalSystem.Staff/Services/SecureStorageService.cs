@@ -1,33 +1,35 @@
-﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Threading.Tasks;
 
 namespace MedicalSystem.Staff.Services
 {
-    public class SecureStorageService
+    public class TokenService
     {
-        private const string TokenKey = "authToken";
-
-        private readonly ProtectedSessionStorage _sessionStorage;
-
-        public SecureStorageService(ProtectedSessionStorage sessionStorage)
+        private const string TokenKey = "jwt_token";
+        private readonly ProtectedLocalStorage _protectedLocalStorage;
+        public TokenService(ProtectedLocalStorage protectedLocalStorage)
         {
-            _sessionStorage = sessionStorage;
+            _protectedLocalStorage = protectedLocalStorage;
+        }
+        public Task SaveTokenAsync(string token)
+        {
+            await _protectedLocalStorage.SetAsync("jwt_token", token);
+            var result = await _protectedLocalStorage.GetAsync<string>("jwt_token");
+            var token = result.Success ? result.Value : null;
         }
 
-        public async Task SetToken(string token)
+        public async Task<string> GetTokenAsync()
         {
-            await _sessionStorage.SetAsync(TokenKey, token);
-        }
-
-        public async Task<string?> GetToken()
-        {
-            var result = await _sessionStorage.GetAsync<string>(TokenKey);
+            var result = await _protectedLocalStorage.GetAsync<string>(TokenKey);
             return result.Success ? result.Value : null;
         }
 
-        public async Task ClearToken()
+        public ValueTask RemoveTokenAsync()
         {
-            await _sessionStorage.DeleteAsync(TokenKey);
+            return _protectedLocalStorage.DeleteAsync(TokenKey);
         }
+
+        //[Inject] public ProtectedLocalStorage ProtectedLocalStorage { get; set; }
     }
 }

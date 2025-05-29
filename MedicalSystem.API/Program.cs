@@ -1,5 +1,4 @@
-﻿using MedicalSystem.API.Endpoints;
-using MedicalSystem.Infrastructure;
+﻿using MedicalSystem.Infrastructure;
 using MedicalSystem.Application;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -22,7 +21,7 @@ var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://localhost:5001"; // Change as needed
+        options.Authority = "http://localhost:5074"; // Change as needed
         options.RequireHttpsMetadata = false;
         options.Audience = "medical_api";
         options.TokenValidationParameters = new TokenValidationParameters
@@ -34,30 +33,40 @@ builder.Services.AddAuthentication("Bearer")
 
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = key // ✅ MUST MATCH the key used in AuthEndpoints
+            IssuerSigningKey = key 
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Patient", policy =>
-    {
-        policy.RequireRole("Patient");
-    });
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("Patient", policy =>
+//    {
+//        policy.RequireRole("Patient");
+//    });
 
-    // You may add other roles too for later use
-    options.AddPolicy("Doctor", policy =>
-    {
-        policy.RequireRole("Doctor");
-    });
-});
+//    // You may add other roles too for later use
+//    options.AddPolicy("Doctor", policy =>
+//    {
+//        policy.RequireRole("Doctor");
+//    });
+//});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerAuth();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
-
+app.UseCors("AllowAll");
 
 // Configure middleware
 if (app.Environment.IsDevelopment())
@@ -70,10 +79,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers(); // for attribute routing if needed
-app.MapAuthEndpoints();
-app.MapUserEndpoints();
-app.MapPatientEndpoints();
-app.MapAppointmentEndpoints();
 // Temporary minimal endpoint to test
 app.MapGet("/", () => "MedicalSystem API is running").AllowAnonymous();
 

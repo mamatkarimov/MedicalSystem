@@ -1,7 +1,6 @@
 ﻿@page "/patients"
 @using MedicalSystem.Application.Models.Responses
-@inject HttpClient Http
-
+@inject IHttpClientFactory _httpClientFactory
 <h3>Registered Patients</h3>
 
 @if (patients == null)
@@ -33,9 +32,16 @@ else
 
 @code {
     private List<PatientListItem>? patients;
+    private HttpClient _http;
+
+     protected override void OnInitialized()
+    {
+        _http = _httpClientFactory.CreateClient("AuthHttpClient");
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        patients = await Http.GetFromJsonAsync<List<PatientListItem>>("api/patients");
-    }
+        _http = _httpClientFactory.CreateClient("AuthHttpClient");
+        patients = await _http.GetFromJsonAsync<List<PatientListItem>>("api/patients");
+    }   
 }

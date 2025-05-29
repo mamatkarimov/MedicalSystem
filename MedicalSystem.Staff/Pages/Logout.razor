@@ -8,22 +8,29 @@
 <h3>Logging out...</h3>
 
 @code {
-    private bool _loggedOut = false;
+    // private bool _loggedOut = false;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender && !_loggedOut)
+    //     {
+    //         _loggedOut = true;
+
+    //         await SecureStorageService.ClearToken();
+
+    //         if (AuthStateProvider is JwtAuthenticationStateProvider jwtProvider)
+    //         {
+    //             jwtProvider.NotifyUserLogout();
+    //         }
+
+    //         Navigation.NavigateTo("/login", forceLoad: true);
+    //     }
+    // }
+
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender && !_loggedOut)
-        {
-            _loggedOut = true;
-
-            await SecureStorageService.ClearToken();
-
-            if (AuthStateProvider is JwtAuthenticationStateProvider jwtProvider)
-            {
-                jwtProvider.NotifyUserLogout();
-            }
-
-            Navigation.NavigateTo("/login", forceLoad: true);
-        }
+        await SecureStorageService.RemoveTokenAsync();
+        ((JwtAuthenticationStateProvider)AuthStateProvider).NotifyUserLogout();
+        Navigation.NavigateTo("/login");
     }
 }

@@ -1,65 +1,189 @@
-﻿using MedicalSystem.Domain.Entities;
-using MedicalSystem.Infrastructure.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Azure.Core;
+using MedicalSystem.API.Models.Auth;
+using MedicalSystem.Domain.Entities;
+using MedicalSystem.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 
-namespace MedicalSystem.API.Controllers
+namespace MedicalSystem.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    private readonly AppDbContext _db;
+    private readonly IConfiguration _config;
+
+    public AuthController(AppDbContext db, IConfiguration config)
     {
-        private readonly AppDbContext _context;
-        private readonly IConfiguration _config;
+        _db = db;
+        _config = config;
+    }
 
-        public AuthController(AppDbContext context, IConfiguration config)
+    private async Task<Guid> GetRoleIdAsync(string roleName)
+    {
+        var role = await _db.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+        if (role == null)
+            throw new Exception($"Role '{roleName}' not found.");
+        return role.Id;
+    }
+
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    {
+        var user = await _db.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Username == request.Username);
+
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            return Unauthorized();
+
+        var claims = new List<Claim>
         {
-            _context = context;
-            _config = config;
-        }
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username)
+        };
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        foreach (var role in user.UserRoles.Select(ur => ur.Role.Name))
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(1),
+            signingCredentials: creds);
+
+        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    {
+        if (await _db.Users.AnyAsync(u => u.Username == request.Username))
+            return BadRequest("Username already taken");
+
+        var role = await _db.Roles.FirstOrDefaultAsync(r => r.Name == request.Role);
+        if (role == null)
+            return BadRequest("Invalid role");
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+        var user = new User
         {
-            var user = _context.Users.FirstOrDefault(u =>
-                u.Username == request.Username && u.Password == request.Password);
+            Username = request.Username,
+            PasswordHash = hashedPassword,
+            Email = request.Email
+        };
 
-            if (user == null)
-                return Unauthorized("Invalid username or password");
+        user.UserRoles.Add(new UserRole
+        {
+            Role = role
+        });
 
-            var claims = new[]
+        _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+
+        return Ok(new { user.Id, user.Username, Role = request.Role });
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> Me()
+    {
+        var username = User.Identity?.Name;
+
+        if (string.IsNullOrEmpty(username))
+            return Unauthorized();
+
+        var found = await _db.Users
+            .Where(u => u.Username == username)
+            .Select(u => new UserInfoResponse
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),  // ✅ Needed for appointments
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+                Username = u.Username,
+                UserRoles = u.UserRoles
+            })
+            .FirstOrDefaultAsync();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        return found is not null
+            ? Ok(found)
+            : NotFound("User not found");
+    }
 
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
-                signingCredentials: creds
-            );
+    [HttpPost("register-patient")]
+    public async Task<IActionResult> RegisterPatient(RegisterPatientRequest request)
+    {
+        if (await _db.Users.AnyAsync(u => u.Username == request.Username))
+            return BadRequest("Username already taken");
 
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return Ok(new { token });
-        }
-
-        public class LoginRequest
+        var user = new User
         {
-            public string Username { get; set; } = string.Empty;
-            public string Password { get; set; } = string.Empty;
-        }
+            Username = request.Username,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            UserRoles = new List<UserRole>
+            {
+                new UserRole { RoleId = await GetRoleIdAsync(UserRoles.Patient) }
+            }
+        };
+
+        _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+
+        _db.Patients.Add(new Patient
+        {
+            UserId = user.Id,
+            DateOfBirth = request.DateOfBirth,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Gender = request.Gender
+        });
+
+        await _db.SaveChangesAsync();
+
+        return Ok("Patient registered successfully");
+    }
+
+    [HttpPost("register-staff")]
+    public async Task<IActionResult> RegisterStaff(RegisterStaffRequest request)
+    {
+        if (await _db.Users.AnyAsync(u => u.Username == request.Username))
+            return BadRequest("Username already taken");
+
+        var user = new User
+        {
+            Username = request.Username,
+            Email = request.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            UserRoles = new List<UserRole>
+            {
+                new UserRole { RoleId = await GetRoleIdAsync(UserRoles.Doctor) }
+            }
+        };
+
+        _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+
+        _db.StaffProfiles.Add(new StaffProfile
+        {
+            UserId = user.Id,
+            Position = request.Role,
+            Department = request.Department
+        });
+
+        await _db.SaveChangesAsync();
+
+        return Ok("Doctor registered successfully");
     }
 }

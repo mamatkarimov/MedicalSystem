@@ -23,11 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BackgroundServices\" />
     <Folder Include="Configurations\" />
-    <Folder Include="EventHandlers\" />
-    <Folder Include="Infrastructure\" />
-    <Folder Include="Mapping\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
