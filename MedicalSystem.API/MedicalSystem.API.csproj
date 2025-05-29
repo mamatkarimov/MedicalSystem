@@ -8,19 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\AppointmentsController.cs" />
-    <Compile Remove="Controllers\AuthController.cs" />
-    <Compile Remove="Controllers\LaboratoryController.cs" />
-    <Compile Remove="Controllers\MedicalRecordsController.cs" />
-    <Compile Remove="Controllers\PaymentsController.cs" />
-    <Compile Remove="Controllers\QueueController.cs" />
-    <Compile Remove="Controllers\ReportsController.cs" />
-    <Compile Remove="Controllers\StationaryController.cs" />
-    <Compile Remove="Controllers\UsersController.cs" />
-    <Compile Remove="Controllers\ValuesController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
