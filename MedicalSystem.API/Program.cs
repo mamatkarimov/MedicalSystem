@@ -6,6 +6,7 @@ using System.Text;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using MedicalSystem.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +53,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerAuth();
 
 var app = builder.Build();
 
