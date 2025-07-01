@@ -23,6 +23,22 @@ namespace MedicalSystem.Infrastructure.Persistence
         public DbSet<TestTemplate> TestTemplates { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<QueueItem> QueueItems { get; set; }
+        public DbSet<Hospitalization> Hospitalizations { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<NurseRound> NurseRounds { get; set; }
+        public DbSet<PatientDiet> PatientDiets { get; set; }
+        public DbSet<Ward> Wards { get; set; }
+        public DbSet<PatientQueue> PatientQueues { get; set; }
+        public DbSet<LabOrder> LabOrders { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<MedicalHistory> MedicalHistories { get; set; }
+        public DbSet<LabTestType> LabTestTypes { get; set; }
+        public DbSet<LabOrderDetail> LabOrderDetails { get; set; }
+        public DbSet<Bed> Beds { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

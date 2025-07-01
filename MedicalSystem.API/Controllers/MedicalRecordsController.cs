@@ -1,6 +1,5 @@
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
-using MedicalSystem.Infrastructure.Data;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

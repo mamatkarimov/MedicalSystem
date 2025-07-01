@@ -1,6 +1,5 @@
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
-using MedicalSystem.Infrastructure.Data;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,14 +34,14 @@ public class PaymentsController : ControllerBase
         _context.Services.Add(service);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetService", new { id = service.ServiceID }, service);
+        return CreatedAtAction("GetService", new { id = service.Id }, service);
     }
 
     [Authorize(Roles = "Admin,Accountant")]
     [HttpPut("services/{id}")]
-    public async Task<IActionResult> UpdateService(int id, Service service)
+    public async Task<IActionResult> UpdateService(Guid id, Service service)
     {
-        if (id != service.ServiceID)
+        if (id != service.Id)
         {
             return BadRequest();
         }
@@ -216,9 +215,9 @@ public class PaymentsController : ControllerBase
         };
     }
 
-    private bool ServiceExists(int id)
+    private bool ServiceExists(Guid id)
     {
-        return _context.Services.Any(e => e.ServiceID == id);
+        return _context.Services.Any(e => e.Id == id);
     }
 }
 }
