@@ -14,6 +14,8 @@ namespace MedicalSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
         //public string Role { get; set; } = default!;
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+        public StaffProfile? StaffProfile { get; set; } // Optional: if the user is a staff member
     }
 
     public class Role
@@ -56,8 +58,8 @@ namespace MedicalSystem.Domain.Entities
         public User? User { get; set; }
         public string Position { get; set; } // Example: "Doctor", "Nurse", "Admin", etc.
         public string? Department { get; set; } // Optional: e.g., "Cardiology"
-
-        
+        public string FirstName { get; set; } = default!;
+        public string LastName { get; set; } = default!;
     }
 
     public class Appointment
@@ -106,6 +108,7 @@ namespace MedicalSystem.Domain.Entities
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }
         public string Category { get; set; } = default!;
+        public bool IsActive { get; set; } = true;
     }
 
     public class Payment
@@ -113,12 +116,16 @@ namespace MedicalSystem.Domain.Entities
         public Guid Id { get; set; }
         public Guid PatientId { get; set; }
         public Patient Patient { get; set; } = default!;
-        public DateTime Date { get; set; }
+        public DateTime PaymentDate { get; set; }
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; } = default!;
         public string? ReceiptNumber { get; set; }
         public string ReceivedByID { get; set; }
         public ICollection<Refund> Refunds { get; set; } = new List<Refund>();
+        public string Notes { get; set; } = default!;
+        public Guid InvoiceId { get; set; }
+        public Invoice Invoice { get; set; }
+        public User ReceivedBy { get; set; }
     }
 
     public class Refund

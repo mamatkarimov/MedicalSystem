@@ -60,7 +60,7 @@ public class ReportsController : ControllerBase
             .GroupBy(a => a.Doctor)
             .Select(g => new
             {
-                Doctor = $"{g.Key.LastName} {g.Key.FirstName}",
+                Doctor = $"{g.Key.StaffProfile.LastName} {g.Key.StaffProfile.LastName}",
                 Count = g.Count()
             });
 

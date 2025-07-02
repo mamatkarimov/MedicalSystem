@@ -1,7 +1,7 @@
 ﻿@page "/logout"
 @using MedicalSystem.Staff.Auth
 @using MedicalSystem.Staff.Services
-@inject SecureStorageService SecureStorageService
+
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 
@@ -29,7 +29,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await SecureStorageService.RemoveTokenAsync();
+        await TokenService.RemoveTokenAsync();
         ((JwtAuthenticationStateProvider)AuthStateProvider).NotifyUserLogout();
         Navigation.NavigateTo("/login");
     }

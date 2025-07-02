@@ -6,17 +6,17 @@ namespace MedicalSystem.Staff.Auth
 {
     public class JwtAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly SecureStorageService _storageService;
+        private readonly TokenService _storageService;
         private Timer? _expirationTimer;
 
-        public JwtAuthenticationStateProvider(SecureStorageService storageService)
+        public JwtAuthenticationStateProvider(TokenService storageService)
         {
             _storageService = storageService;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var token = await _storageService.GetToken();
+            var token = await _storageService.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
@@ -53,7 +53,7 @@ namespace MedicalSystem.Staff.Auth
         public async Task Logout()
         {
             _expirationTimer?.Dispose();
-            await _storageService.ClearToken();
+            await _storageService.RemoveTokenAsync();
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
         }
 
@@ -83,7 +83,7 @@ namespace MedicalSystem.Staff.Auth
         {
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(jwt);
-            var expClaim = token.Payload.Exp;
+            var expClaim = token.Payload.Expiration;
             if (expClaim == null) return null;
 
             var expDateTime = DateTimeOffset.FromUnixTimeSeconds((long)expClaim).UtcDateTime;

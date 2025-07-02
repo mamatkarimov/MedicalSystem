@@ -156,7 +156,7 @@ public class PaymentsController : ControllerBase
     [HttpPost("payments")]
     public async Task<ActionResult<Payment>> ProcessPayment(ProcessPaymentRequest request)
     {
-        var invoice = await _context.Invoices.FindAsync(request.InvoiceID);
+        var invoice = await _context.Invoices.FindAsync(request.InvoiceId);
         if (invoice == null)
         {
             return NotFound("Invoice not found");
@@ -171,7 +171,7 @@ public class PaymentsController : ControllerBase
 
         var payment = new Payment
         {
-            InvoiceID = request.InvoiceID,
+            InvoiceId = request.InvoiceId,
             Amount = request.Amount,
             PaymentMethod = request.PaymentMethod,
             ReceivedByID = userId,
@@ -192,7 +192,7 @@ public class PaymentsController : ControllerBase
         _context.Payments.Add(payment);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetPayment", new { id = payment.PaymentID }, payment);
+        return CreatedAtAction("GetPayment", new { id = payment.Id }, payment);
     }
 
     [Authorize(Roles = "Admin,Accountant")]

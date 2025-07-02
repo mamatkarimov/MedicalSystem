@@ -6,11 +6,11 @@ namespace MedicalSystem.Staff
 {
     public class HttpInterceptor : DelegatingHandler
     {
-        private readonly SecureStorageService _secureStorage;
+        private readonly TokenService _secureStorage;
         private readonly NavigationManager _navigation;
 
         public HttpInterceptor(
-            SecureStorageService secureStorage,
+            TokenService secureStorage,
             NavigationManager navigation)
         {
             _secureStorage = secureStorage;

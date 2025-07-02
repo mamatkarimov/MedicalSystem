@@ -12,14 +12,14 @@ namespace MedicalSystem.Staff.Services
         {
             _protectedLocalStorage = protectedLocalStorage;
         }
-        public Task SaveTokenAsync(string token)
+        public async Task SaveTokenAsync(string token)
         {
             await _protectedLocalStorage.SetAsync("jwt_token", token);
             var result = await _protectedLocalStorage.GetAsync<string>("jwt_token");
             var token = result.Success ? result.Value : null;
         }
 
-        public async Task<string> GetTokenAsync()
+        public async Task<string?> GetTokenAsync()
         {
             var result = await _protectedLocalStorage.GetAsync<string>(TokenKey);
             return result.Success ? result.Value : null;
