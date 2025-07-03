@@ -15,8 +15,8 @@ namespace MedicalSystem.Staff.Services
         public async Task SaveTokenAsync(string token)
         {
             await _protectedLocalStorage.SetAsync("jwt_token", token);
-            var result = await _protectedLocalStorage.GetAsync<string>("jwt_token");
-            var token = result.Success ? result.Value : null;
+            //var result = await _protectedLocalStorage.GetAsync<string>("jwt_token");
+            //var token = result.Success ? result.Value : null;
         }
 
         public async Task<string?> GetTokenAsync()

@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Deleted\**" />
+    <EmbeddedResource Remove="Deleted\**" />
+    <None Remove="Deleted\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Entities\AppToken.cs" />
     <Compile Remove="Entities\CreateInvoiceRequest.cs" />
     <Compile Remove="Entities\DbUser.cs" />
