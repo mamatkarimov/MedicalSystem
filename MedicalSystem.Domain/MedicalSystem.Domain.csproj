@@ -18,10 +18,7 @@
     <Compile Remove="Entities\DbUser.cs" />
     <Compile Remove="Entities\InstrumentalStudy.cs" />
     <Compile Remove="Entities\InvoiceItem.cs" />
-    <Compile Remove="Entities\Patient.cs" />
     <Compile Remove="Entities\PatientDocument.cs" />
-    <Compile Remove="Entities\Payment.cs" />
-    <Compile Remove="Entities\Service.cs" />
   </ItemGroup>
 
   <ItemGroup>
