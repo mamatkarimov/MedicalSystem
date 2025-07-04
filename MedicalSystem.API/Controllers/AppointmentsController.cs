@@ -107,6 +107,47 @@ namespace MedicalSystem.API.Controllers
             return CreatedAtAction("GetAppointment", new { id = appointment.Id }, appointment);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Patient")]
+        public async Task<IActionResult> BookAppointment([FromBody] AppointmentRequest request)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var patientId))
+                    return Unauthorized("User ID not found or invalid");
+
+                var doctor = await _context.Users
+    .Include(u => u.UserRoles)
+        .ThenInclude(ur => ur.Role)
+    .FirstOrDefaultAsync(u => u.Id == request.DoctorId);
+
+                if (doctor == null || !doctor.UserRoles.Any(r => r.Role.Name == UserRoles.Doctor))
+                    return BadRequest("Invalid doctor ID");
+
+                var appointment = new Appointment
+                {
+                    Id = Guid.NewGuid(),
+                    PatientId = patientId,
+                    DoctorId = request.DoctorId,
+                    AppointmentDate = request.Date,
+                    Symptoms = request.Symptoms,
+                    Status = "Pending"
+                };
+
+                _context.Appointments.Add(appointment);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { appointment.Id });
+            }
+            catch (Exception ex)
+            {
+                // Log or return error for debugging
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [Authorize(Roles = "Admin,Reception,Doctor")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAppointment(Guid id, Appointment appointment)
@@ -197,46 +238,7 @@ namespace MedicalSystem.API.Controllers
             return Ok(appointments);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Patient")]
-        public async Task<IActionResult> BookAppointment([FromBody] AppointmentRequest request)
-        {
-            try
-            {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var patientId))
-                    return Unauthorized("User ID not found or invalid");
-
-                var doctor = await _context.Users
-    .Include(u => u.UserRoles)
-        .ThenInclude(ur => ur.Role)
-    .FirstOrDefaultAsync(u => u.Id == request.DoctorId);
-
-                if (doctor == null || !doctor.UserRoles.Any(r => r.Role.Name == UserRoles.Doctor))
-                    return BadRequest("Invalid doctor ID");
-
-                var appointment = new Appointment
-                {
-                    Id = Guid.NewGuid(),
-                    PatientId = patientId,
-                    DoctorId = request.DoctorId,
-                    AppointmentDate = request.Date,
-                    Symptoms = request.Symptoms,
-                    Status = "Pending"
-                };
-
-                _context.Appointments.Add(appointment);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { appointment.Id });
-            }
-            catch (Exception ex)
-            {
-                // Log or return error for debugging
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+       
 
         [HttpGet("doctor")]
         [Authorize(Policy = "Doctor")]
