@@ -1,3 +1,6 @@
 dotnet tool install --global dotnet-ef
 dotnet ef migrations add AddUserRolesSupport --project ../MedicalSystem.Infrastructure --startup-project ../MedicalSystem.Api
 dotnet ef database update --project ../MedicalSystem.Infrastructure --startup-project .
+
+
+dotnet ef migrations add keytypeupdate --project ../MedicalSystem.Infrastructure --startup-project ../MedicalSystem.Api
