@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace MedicalSystem.API.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AppointmentsController : ControllerBase
@@ -21,7 +21,7 @@ namespace MedicalSystem.API.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Admin,Reception,Doctor")]
+      //  [Authorize(Roles = "Admin,Reception,Doctor")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
         {
