@@ -165,8 +165,12 @@ public class StationaryController : ControllerBase
             return BadRequest("Patient is not hospitalized");
         }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        round.NurseID = userId;
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+            {
+                return Unauthorized("Invalid or missing user ID.");
+            }
+            round.NurseID = userId;
 
         _context.NurseRounds.Add(round);
         await _context.SaveChangesAsync();
@@ -176,7 +180,7 @@ public class StationaryController : ControllerBase
 
     [Authorize(Roles = "Admin,ChiefDoctor,Nurse")]
     [HttpGet("rounds/{patientId}")]
-    public async Task<ActionResult<IEnumerable<NurseRound>>> GetNurseRounds(int patientId)
+    public async Task<ActionResult<IEnumerable<NurseRound>>> GetNurseRounds(Guid patientId)
     {
         return await _context.NurseRounds
             .Include(r => r.Nurse)
@@ -223,7 +227,7 @@ public class StationaryController : ControllerBase
 
     [Authorize(Roles = "Admin,ChiefDoctor,Nurse")]
     [HttpGet("diets/{patientId}")]
-    public async Task<ActionResult<IEnumerable<PatientDiet>>> GetPatientDiets(int patientId)
+    public async Task<ActionResult<IEnumerable<PatientDiet>>> GetPatientDiets(Guid patientId)
     {
         return await _context.PatientDiets
             .Where(d => d.PatientID == patientId)

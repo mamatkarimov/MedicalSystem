@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedicalSystem.Application.Models.Requests
@@ -5,7 +6,7 @@ namespace MedicalSystem.Application.Models.Requests
     public class AdmitPatientRequest
 {
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     [Required]
     public int BedID { get; set; }
@@ -14,6 +15,6 @@ namespace MedicalSystem.Application.Models.Requests
     public string DiagnosisOnAdmission { get; set; }
     
     [Required]
-    public string AttendingDoctorID { get; set; }
+    public Guid AttendingDoctorID { get; set; }
 }
 }

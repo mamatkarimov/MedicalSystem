@@ -8,9 +8,9 @@ namespace MedicalSystem.Domain.Entities
         [Key]
         public int QueueID { get; set; }
                 [Required]
-        public int PatientID { get; set; }
+        public Guid PatientID { get; set; }
         
-        public int? AppointmentID { get; set; }
+        public Guid? AppointmentID { get; set; }
         
         public DateTime QueueDate { get; set; } = DateTime.UtcNow;
         

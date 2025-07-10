@@ -7,10 +7,10 @@ namespace MedicalSystem.Domain.Entities
     public class Invoice
 {
     [Key]
-    public int InvoiceID { get; set; }
+    public Guid InvoiceID { get; set; }
     
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     [Required]
     public DateTime InvoiceDate { get; set; } = DateTime.UtcNow;
@@ -27,7 +27,7 @@ namespace MedicalSystem.Domain.Entities
     public string Status { get; set; } = "Pending"; // Pending, PartiallyPaid, Paid, Cancelled
     
     [Required]
-    public string CreatedByID { get; set; }
+    public Guid CreatedByID { get; set; }
     
     // Navigation properties
     public Patient Patient { get; set; }

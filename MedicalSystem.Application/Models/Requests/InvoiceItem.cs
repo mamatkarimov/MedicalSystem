@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedicalSystem.Application.Models.Requests
@@ -5,7 +6,7 @@ namespace MedicalSystem.Application.Models.Requests
     public class InvoiceItem
 {
     [Required]
-    public int ServiceID { get; set; }
+    public Guid ServiceID { get; set; }
     
     [Required]
     public int Quantity { get; set; } = 1;

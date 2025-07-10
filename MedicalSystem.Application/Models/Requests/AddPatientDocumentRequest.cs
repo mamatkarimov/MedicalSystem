@@ -6,7 +6,7 @@ namespace MedicalSystem.Application.Models.Requests
     public class AddPatientDocumentRequest
     {
         [Required]
-        public int PatientID { get; set; }
+        public Guid PatientID { get; set; }
         
         [Required]
         public string DocumentType { get; set; }

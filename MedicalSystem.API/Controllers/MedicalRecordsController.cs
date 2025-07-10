@@ -21,7 +21,7 @@ public class MedicalRecordsController : ControllerBase
     }
 
     [HttpGet("history/{patientId}")]
-    public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetPatientHistory(int patientId)
+    public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetPatientHistory(Guid patientId)
     {
         var patient = await _context.Patients.FindAsync(patientId);
         if (patient == null || !patient.IsActive)
@@ -45,9 +45,13 @@ public class MedicalRecordsController : ControllerBase
             return NotFound("Patient not found");
         }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+            {
+                return Unauthorized("Invalid or missing user ID.");
+            }
 
-        var history = new MedicalHistory
+            var history = new MedicalHistory
         {
             PatientID = request.PatientID,
             RecordedByID = userId,
@@ -62,7 +66,7 @@ public class MedicalRecordsController : ControllerBase
     }
 
     [HttpGet("prescriptions/{patientId}")]
-    public async Task<ActionResult<IEnumerable<Prescription>>> GetPatientPrescriptions(int patientId)
+    public async Task<ActionResult<IEnumerable<Prescription>>> GetPatientPrescriptions(Guid patientId)
     {
         var patient = await _context.Patients.FindAsync(patientId);
         if (patient == null || !patient.IsActive)
@@ -86,9 +90,13 @@ public class MedicalRecordsController : ControllerBase
             return NotFound("Patient not found");
         }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+            {
+                return Unauthorized("Invalid or missing user ID.");
+            }
 
-        var prescription = new Prescription
+            var prescription = new Prescription
         {
             PatientID = request.PatientID,
             PrescribedByID = userId,

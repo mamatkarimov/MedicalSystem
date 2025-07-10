@@ -38,9 +38,13 @@ public class LaboratoryController : ControllerBase
             return NotFound("Patient not found");
         }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+            {
+                return Unauthorized("Invalid or missing user ID.");
+            }
 
-        var order = new LabOrder
+            var order = new LabOrder
         {
             PatientID = request.PatientID,
             OrderedByID = userId,
@@ -126,9 +130,13 @@ public class LaboratoryController : ControllerBase
             return NotFound();
         }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+            {
+                return Unauthorized("Invalid or missing user ID.");
+            }
 
-        orderDetail.Result = request.Result;
+            orderDetail.Result = request.Result;
         orderDetail.ResultDate = DateTime.UtcNow;
         orderDetail.PerformedByID = userId;
         orderDetail.Status = "Completed";

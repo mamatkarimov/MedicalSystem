@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedicalSystem.Domain.Entities
@@ -8,10 +9,10 @@ namespace MedicalSystem.Domain.Entities
     public int InvoiceDetailID { get; set; }
     
     [Required]
-    public int InvoiceID { get; set; }
+    public Guid InvoiceID { get; set; }
     
     [Required]
-    public int ServiceID { get; set; }
+    public Guid ServiceID { get; set; }
     
     [Required]
     public int Quantity { get; set; } = 1;

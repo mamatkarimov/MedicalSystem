@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MedicalSystem.Application.Models.Requests
@@ -5,7 +6,7 @@ namespace MedicalSystem.Application.Models.Requests
     public class CreatePrescriptionRequest
 {
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     [Required]
     public string Medication { get; set; }

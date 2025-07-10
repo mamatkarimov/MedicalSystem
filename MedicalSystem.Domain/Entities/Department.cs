@@ -15,7 +15,7 @@ namespace MedicalSystem.Domain.Entities
         public string Name { get; set; }
 
         public string Description { get; set; }
-        public string HeadDoctorID { get; set; }
+        public Guid HeadDoctorID { get; set; }
 
         // Navigation properties
         public User HeadDoctor { get; set; }

@@ -11,7 +11,7 @@ namespace MedicalSystem.Domain.Entities
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; } = default!;
         public string? ReceiptNumber { get; set; }
-        public string ReceivedByID { get; set; }
+        public Guid ReceivedByID { get; set; }
         public ICollection<Refund> Refunds { get; set; } = new List<Refund>();
         public string Notes { get; set; } = default!;
         public Guid InvoiceId { get; set; }

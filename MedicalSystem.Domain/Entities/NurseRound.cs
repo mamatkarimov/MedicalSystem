@@ -10,10 +10,10 @@ namespace MedicalSystem.Domain.Entities
     public int RoundID { get; set; }
     
     [Required]
-    public string NurseID { get; set; }
+    public Guid NurseID { get; set; }
     
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     public DateTime RoundDate { get; set; } = DateTime.UtcNow;
     public decimal? Temperature { get; set; }

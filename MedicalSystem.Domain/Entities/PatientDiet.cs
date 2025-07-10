@@ -9,7 +9,7 @@ namespace MedicalSystem.Domain.Entities
 [Key]    public int DietID { get; set; }
     
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     [Required]
     public int HospitalizationID { get; set; }

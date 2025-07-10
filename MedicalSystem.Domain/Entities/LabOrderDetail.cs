@@ -20,7 +20,7 @@ namespace MedicalSystem.Domain.Entities
     
     public string Result { get; set; }
     public DateTime? ResultDate { get; set; }
-    public string PerformedByID { get; set; }
+    public Guid PerformedByID { get; set; }
     public string ReferenceRange { get; set; }
     
     // Navigation properties

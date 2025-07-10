@@ -10,7 +10,7 @@ namespace MedicalSystem.Domain.Entities
     public int HospitalizationID { get; set; }
     
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     [Required]
     public int BedID { get; set; }
@@ -21,7 +21,7 @@ namespace MedicalSystem.Domain.Entities
     public DateTime? DischargeDate { get; set; }
     public string DiagnosisOnAdmission { get; set; }
     public string DiagnosisOnDischarge { get; set; }
-    public string AttendingDoctorID { get; set; }
+    public Guid AttendingDoctorID { get; set; }
     
     [Required]
     public string Status { get; set; } // Active, Discharged, Transferred

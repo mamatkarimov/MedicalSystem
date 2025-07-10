@@ -58,8 +58,8 @@ namespace MedicalSystem.API.Controllers
             return appointment;
         }
 
-        [Authorize(Roles = "Admin,Reception,Patient")]
-        [HttpPost]
+        [Authorize(Roles = "Admin,Reception")]
+        [HttpPost("create")]
         public async Task<ActionResult<Appointment>> CreateAppointment(CreateAppointmentRequest request)
         {
             // Check if patient exists
@@ -107,7 +107,7 @@ namespace MedicalSystem.API.Controllers
             return CreatedAtAction("GetAppointment", new { id = appointment.Id }, appointment);
         }
 
-        [HttpPost]
+        [HttpPost("book")]
         [Authorize(Roles = "Patient")]
         public async Task<IActionResult> BookAppointment([FromBody] AppointmentRequest request)
         {

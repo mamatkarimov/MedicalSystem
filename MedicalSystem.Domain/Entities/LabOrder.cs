@@ -10,10 +10,10 @@ namespace MedicalSystem.Domain.Entities
     public int OrderID { get; set; }
     
     [Required]
-    public int PatientID { get; set; }
+    public Guid PatientID { get; set; }
     
     [Required]
-    public string OrderedByID { get; set; }
+    public Guid OrderedByID { get; set; }
     
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
     
