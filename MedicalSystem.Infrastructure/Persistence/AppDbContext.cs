@@ -360,13 +360,16 @@ namespace MedicalSystem.Infrastructure.Persistence
                 entity.HasKey(lod => lod.OrderDetailID);
                 entity.HasOne(lod => lod.LabOrder)
                       .WithMany(lo => lo.LabOrderDetails)
-                      .HasForeignKey(lod => lod.OrderID);
+                      .HasForeignKey(lod => lod.OrderID)
+                      .OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(lod => lod.TestType)
                       .WithMany(tt => tt.LabOrderDetails)
-                      .HasForeignKey(lod => lod.TestTypeID);
+                      .HasForeignKey(lod => lod.TestTypeID)
+                      .OnDelete(DeleteBehavior.NoAction) ;
                 entity.HasOne(lod => lod.PerformedBy)
                       .WithMany()
-                      .HasForeignKey(lod => lod.PerformedByID);
+                      .HasForeignKey(lod => lod.PerformedByID)
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
             // Prescription
