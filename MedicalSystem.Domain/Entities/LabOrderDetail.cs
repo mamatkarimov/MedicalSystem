@@ -7,20 +7,20 @@ namespace MedicalSystem.Domain.Entities
 {
 
 [Key] 
-    public int OrderDetailID { get; set; }
+    public int Id { get; set; }
     
     [Required]
-    public int OrderID { get; set; }
+    public int OrderId { get; set; }
     
     [Required]
-    public int TestTypeID { get; set; }
+    public int TestTypeId { get; set; }
     
     [Required]
     public string Status { get; set; } = "Pending";
     
     public string Result { get; set; }
     public DateTime? ResultDate { get; set; }
-    public Guid PerformedByID { get; set; }
+    public Guid PerformedById { get; set; }
     public string ReferenceRange { get; set; }
     
     // Navigation properties

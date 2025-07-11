@@ -1,3 +1,4 @@
+using MedicalSystem.Application.DTOs;
 using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Domain.Enums;
@@ -28,17 +29,28 @@ namespace MedicalSystem.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRoles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
 
-            IQueryable<Appointment> query = _context.Appointments
-                .Include(a => a.Patient)
-                .Include(a => a.Doctor);
+            IQueryable<Appointment> query = _context.Appointments;
 
-            // Doctors can see only their appointments
+            // Doctors see only their appointments
             if (userRoles.Contains("Doctor") && Guid.TryParse(userId, out var doctorGuid))
             {
                 query = query.Where(a => a.DoctorId == doctorGuid);
             }
 
-            return await query.ToListAsync();
+            // No need to include navigation properties if we return DTOs
+            var appointments = await query
+                .Select(a => new AppointmentDto
+                {
+                    Id = a.Id,
+                    PatientId = a.PatientId,
+                    DoctorId = a.DoctorId,
+                    AppointmentDate = a.AppointmentDate,
+                    Status = a.Status,
+                    Symptoms = a.Symptoms
+                })
+                .ToListAsync();
+
+            return Ok(appointments);
         }
 
         [Authorize(Roles = "Admin,Reception,Doctor")]
@@ -62,36 +74,39 @@ namespace MedicalSystem.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<Appointment>> CreateAppointment(CreateAppointmentRequest request)
         {
-            // Check if patient exists
+            // Проверка пациента
             var patient = await _context.Patients.FindAsync(request.PatientID);
             if (patient == null || !patient.IsActive)
             {
                 return BadRequest("Patient not found");
             }
 
-            // Check if doctor exists
+            // Проверка доктора
             var doctor = await _context.Users.FindAsync(request.DoctorID);
             if (doctor == null)
             {
                 return BadRequest("Doctor not found");
             }
 
-            // Check if appointment date is in the future
+            // Дата
             if (request.AppointmentDate <= DateTime.UtcNow)
             {
                 return BadRequest("Appointment date must be in the future");
             }
 
-            // Check if appointment already exists for the same patient and doctor at the same time
+            // Повторяющаяся запись
             var existingAppointment = await _context.Appointments
-                .FirstOrDefaultAsync(a => a.PatientId == request.PatientID &&
-                                          a.DoctorId == request.DoctorID &&
-                                          a.AppointmentDate == request.AppointmentDate);
+                .FirstOrDefaultAsync(a =>
+                    a.PatientId == request.PatientID &&
+                    a.DoctorId == request.DoctorID &&
+                    a.AppointmentDate == request.AppointmentDate);
+
             if (existingAppointment != null)
             {
                 return Conflict("An appointment already exists for this patient and doctor at the specified time.");
             }
-           
+
+            // Создание
             var appointment = new Appointment
             {
                 PatientId = request.PatientID,
@@ -104,7 +119,18 @@ namespace MedicalSystem.API.Controllers
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAppointment", new { id = appointment.Id }, appointment);
+            // Возвращаем DTO
+            var result = new AppointmentDto
+            {
+                Id = appointment.Id,
+                PatientId = appointment.PatientId,
+                DoctorId = appointment.DoctorId,
+                AppointmentDate = appointment.AppointmentDate,
+                Status = appointment.Status,
+                Symptoms = appointment.Symptoms
+            };
+
+            return CreatedAtAction(nameof(GetAppointment), new { id = appointment.Id }, result);
         }
 
         [HttpPost("book")]

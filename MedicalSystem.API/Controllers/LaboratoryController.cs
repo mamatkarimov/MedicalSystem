@@ -65,8 +65,8 @@ public class LaboratoryController : ControllerBase
 
             var orderDetail = new LabOrderDetail
             {
-                OrderID = order.OrderID,
-                TestTypeID = testTypeId,
+                OrderId = order.Id,
+                TestTypeId = testTypeId,
                 ReferenceRange = testType.NormalRange
             };
 
@@ -75,7 +75,7 @@ public class LaboratoryController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetLabOrder", new { id = order.OrderID }, order);
+        return CreatedAtAction("GetLabOrder", new { id = order.Id }, order);
     }
 
     [Authorize(Roles = "Admin,Doctor,LabTechnician")]
@@ -107,7 +107,7 @@ public class LaboratoryController : ControllerBase
             .Include(o => o.OrderedBy)
             .Include(o => o.LabOrderDetails)
                 .ThenInclude(d => d.TestType)
-            .FirstOrDefaultAsync(o => o.OrderID == id);
+            .FirstOrDefaultAsync(o => o.Id == id);
 
         if (order == null)
         {
@@ -123,7 +123,7 @@ public class LaboratoryController : ControllerBase
     {
         var orderDetail = await _context.LabOrderDetails
             .Include(d => d.LabOrder)
-            .FirstOrDefaultAsync(d => d.OrderDetailID == id);
+            .FirstOrDefaultAsync(d => d.Id == id);
 
         if (orderDetail == null)
         {
@@ -138,7 +138,7 @@ public class LaboratoryController : ControllerBase
 
             orderDetail.Result = request.Result;
         orderDetail.ResultDate = DateTime.UtcNow;
-        orderDetail.PerformedByID = userId;
+        orderDetail.PerformedById = userId;
         orderDetail.Status = "Completed";
 
         if (!string.IsNullOrEmpty(request.ReferenceRange))
@@ -148,7 +148,7 @@ public class LaboratoryController : ControllerBase
 
         // Check if all details are completed
         var allDetailsCompleted = await _context.LabOrderDetails
-            .Where(d => d.OrderID == orderDetail.OrderID)
+            .Where(d => d.OrderId == orderDetail.OrderId)
             .AllAsync(d => d.Status == "Completed");
 
         if (allDetailsCompleted)

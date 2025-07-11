@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicalSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250710164342_keytypeupdate3")]
-    partial class keytypeupdate3
+    [Migration("20250711110018_initial1")]
+    partial class initial1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -284,11 +284,11 @@ namespace MedicalSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("MedicalSystem.Domain.Entities.LabOrder", b =>
                 {
-                    b.Property<int>("OrderID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Notes")
                         .IsRequired()
@@ -311,7 +311,7 @@ namespace MedicalSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("OrderID");
+                    b.HasKey("Id");
 
                     b.HasIndex("OrderedByID");
 
@@ -322,16 +322,16 @@ namespace MedicalSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("MedicalSystem.Domain.Entities.LabOrderDetail", b =>
                 {
-                    b.Property<int>("OrderDetailID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("OrderID")
+                    b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PerformedByID")
+                    b.Property<Guid>("PerformedById")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ReferenceRange")
@@ -349,16 +349,16 @@ namespace MedicalSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TestTypeID")
+                    b.Property<int>("TestTypeId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderDetailID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("OrderID");
+                    b.HasIndex("OrderId");
 
-                    b.HasIndex("PerformedByID");
+                    b.HasIndex("PerformedById");
 
-                    b.HasIndex("TestTypeID");
+                    b.HasIndex("TestTypeId");
 
                     b.ToTable("LabOrderDetails");
                 });
@@ -994,7 +994,7 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Appointment", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "Doctor")
-                        .WithMany()
+                        .WithMany("Appointments")
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1015,13 +1015,13 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Appointment", "Appointment")
                         .WithMany("AssignedTests")
                         .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.TestTemplate", "TestTemplate")
-                        .WithMany()
+                        .WithMany("AssignedTests")
                         .HasForeignKey("TestTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Appointment");
@@ -1034,7 +1034,7 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Ward", "Ward")
                         .WithMany("Beds")
                         .HasForeignKey("WardID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Ward");
@@ -1043,9 +1043,9 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Department", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "HeadDoctor")
-                        .WithMany()
+                        .WithMany("Departments")
                         .HasForeignKey("HeadDoctorID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("HeadDoctor");
@@ -1056,7 +1056,7 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
                         .WithMany("HospitalVisits")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Patient");
@@ -1065,21 +1065,21 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Hospitalization", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "AttendingDoctor")
-                        .WithMany()
+                        .WithMany("Hospitalizations")
                         .HasForeignKey("AttendingDoctorID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Bed", "Bed")
                         .WithMany("Hospitalizations")
                         .HasForeignKey("BedID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("Hospitalizations")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttendingDoctor");
@@ -1092,15 +1092,15 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Invoice", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "CreatedBy")
-                        .WithMany()
+                        .WithMany("Invoices")
                         .HasForeignKey("CreatedByID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("Invoices")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
@@ -1113,13 +1113,13 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Invoice", "Invoice")
                         .WithMany("InvoiceDetails")
                         .HasForeignKey("InvoiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Service", "Service")
-                        .WithMany()
+                        .WithMany("InvoiceDetails")
                         .HasForeignKey("ServiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Invoice");
@@ -1130,15 +1130,15 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.LabOrder", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "OrderedBy")
-                        .WithMany()
+                        .WithMany("LabOrders")
                         .HasForeignKey("OrderedByID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("LabOrders")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("OrderedBy");
@@ -1150,20 +1150,20 @@ namespace MedicalSystem.Infrastructure.Migrations
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.LabOrder", "LabOrder")
                         .WithMany("LabOrderDetails")
-                        .HasForeignKey("OrderID")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.User", "PerformedBy")
-                        .WithMany()
-                        .HasForeignKey("PerformedByID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithMany("LabOrderDetails")
+                        .HasForeignKey("PerformedById")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.LabTestType", "TestType")
                         .WithMany("LabOrderDetails")
-                        .HasForeignKey("TestTypeID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasForeignKey("TestTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("LabOrder");
@@ -1176,19 +1176,20 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.MedicalHistory", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.Appointment", "Appointment")
-                        .WithMany()
-                        .HasForeignKey("AppointmentID");
+                        .WithMany("MedicalHistories")
+                        .HasForeignKey("AppointmentID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("MedicalHistories")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.User", "RecordedBy")
-                        .WithMany()
+                        .WithMany("MedicalHistories")
                         .HasForeignKey("RecordedByID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Appointment");
@@ -1201,15 +1202,15 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.MedicalRecord", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "Doctor")
-                        .WithMany()
+                        .WithMany("MedicalRecords")
                         .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
                         .WithMany("MedicalRecords")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Doctor");
@@ -1224,15 +1225,15 @@ namespace MedicalSystem.Infrastructure.Migrations
                         .HasForeignKey("HospitalizationID");
 
                     b.HasOne("MedicalSystem.Domain.Entities.User", "Nurse")
-                        .WithMany()
+                        .WithMany("NurseRounds")
                         .HasForeignKey("NurseID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("NurseRounds")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Nurse");
@@ -1243,8 +1244,9 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Patient", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("MedicalSystem.Domain.Entities.Patient", "UserId");
+                        .WithOne("Patient")
+                        .HasForeignKey("MedicalSystem.Domain.Entities.Patient", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
                 });
@@ -1254,13 +1256,13 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Hospitalization", "Hospitalization")
                         .WithMany("PatientDiets")
                         .HasForeignKey("HospitalizationID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("PatientDiets")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Hospitalization");
@@ -1271,17 +1273,19 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.PatientQueue", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.Appointment", "Appointment")
-                        .WithMany()
-                        .HasForeignKey("AppointmentID");
+                        .WithMany("PatientQueues")
+                        .HasForeignKey("AppointmentID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MedicalSystem.Domain.Entities.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentID");
+                        .WithMany("PatientQueues")
+                        .HasForeignKey("DepartmentID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("PatientQueues")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Appointment");
@@ -1296,19 +1300,19 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Invoice", "Invoice")
                         .WithMany("Payments")
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
                         .WithMany("Payments")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.User", "ReceivedBy")
-                        .WithMany()
+                        .WithMany("Payments")
                         .HasForeignKey("ReceivedByID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Invoice");
@@ -1321,15 +1325,15 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Prescription", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("Prescriptions")
                         .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MedicalSystem.Domain.Entities.User", "PrescribedBy")
-                        .WithMany()
+                        .WithMany("Prescriptions")
                         .HasForeignKey("PrescribedByID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Patient");
@@ -1340,9 +1344,9 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.QueueItem", b =>
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("QueueItems")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Patient");
@@ -1353,7 +1357,7 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Payment", "Payment")
                         .WithMany("Refunds")
                         .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Payment");
@@ -1363,7 +1367,8 @@ namespace MedicalSystem.Infrastructure.Migrations
                 {
                     b.HasOne("MedicalSystem.Domain.Entities.User", "User")
                         .WithOne("StaffProfile")
-                        .HasForeignKey("MedicalSystem.Domain.Entities.StaffProfile", "UserId");
+                        .HasForeignKey("MedicalSystem.Domain.Entities.StaffProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
                 });
@@ -1373,7 +1378,7 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.AssignedTest", "AssignedTest")
                         .WithMany("Results")
                         .HasForeignKey("AssignedTestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AssignedTest");
@@ -1403,7 +1408,7 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.HasOne("MedicalSystem.Domain.Entities.Department", "Department")
                         .WithMany("Wards")
                         .HasForeignKey("DepartmentID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Department");
@@ -1412,6 +1417,10 @@ namespace MedicalSystem.Infrastructure.Migrations
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Appointment", b =>
                 {
                     b.Navigation("AssignedTests");
+
+                    b.Navigation("MedicalHistories");
+
+                    b.Navigation("PatientQueues");
                 });
 
             modelBuilder.Entity("MedicalSystem.Domain.Entities.AssignedTest", b =>
@@ -1426,6 +1435,8 @@ namespace MedicalSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Department", b =>
                 {
+                    b.Navigation("PatientQueues");
+
                     b.Navigation("Wards");
                 });
 
@@ -1459,9 +1470,27 @@ namespace MedicalSystem.Infrastructure.Migrations
 
                     b.Navigation("HospitalVisits");
 
+                    b.Navigation("Hospitalizations");
+
+                    b.Navigation("Invoices");
+
+                    b.Navigation("LabOrders");
+
+                    b.Navigation("MedicalHistories");
+
                     b.Navigation("MedicalRecords");
 
+                    b.Navigation("NurseRounds");
+
+                    b.Navigation("PatientDiets");
+
+                    b.Navigation("PatientQueues");
+
                     b.Navigation("Payments");
+
+                    b.Navigation("Prescriptions");
+
+                    b.Navigation("QueueItems");
                 });
 
             modelBuilder.Entity("MedicalSystem.Domain.Entities.Payment", b =>
@@ -1474,8 +1503,43 @@ namespace MedicalSystem.Infrastructure.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("MedicalSystem.Domain.Entities.Service", b =>
+                {
+                    b.Navigation("InvoiceDetails");
+                });
+
+            modelBuilder.Entity("MedicalSystem.Domain.Entities.TestTemplate", b =>
+                {
+                    b.Navigation("AssignedTests");
+                });
+
             modelBuilder.Entity("MedicalSystem.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("Departments");
+
+                    b.Navigation("Hospitalizations");
+
+                    b.Navigation("Invoices");
+
+                    b.Navigation("LabOrderDetails");
+
+                    b.Navigation("LabOrders");
+
+                    b.Navigation("MedicalHistories");
+
+                    b.Navigation("MedicalRecords");
+
+                    b.Navigation("NurseRounds");
+
+                    b.Navigation("Patient")
+                        .IsRequired();
+
+                    b.Navigation("Payments");
+
+                    b.Navigation("Prescriptions");
+
                     b.Navigation("StaffProfile");
 
                     b.Navigation("UserRoles");

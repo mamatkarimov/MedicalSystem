@@ -7,7 +7,7 @@ namespace MedicalSystem.Domain.Entities
     public class LabOrder
 {
     [Key] 
-    public int OrderID { get; set; }
+    public int Id { get; set; }
     
     [Required]
     public Guid PatientID { get; set; }
@@ -28,7 +28,8 @@ namespace MedicalSystem.Domain.Entities
     // Navigation properties
     public Patient Patient { get; set; }
     public User OrderedBy { get; set; }
-    public ICollection<LabOrderDetail> LabOrderDetails { get; set; }
+    
+    public ICollection<LabOrderDetail> LabOrderDetails { get; set; } = new List<LabOrderDetail>();
 }
 
 
