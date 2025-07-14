@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MedicalSystem.API.Controllers
 {
@@ -65,9 +66,19 @@ namespace MedicalSystem.API.Controllers
             if (appointment == null)
             {
                 return NotFound();
-            }          
+            }
 
-            return appointment;
+            var appointmentDto = new AppointmentDto
+                {
+                    Id = appointment.Id,
+                    PatientId = appointment.PatientId,
+                    DoctorId = appointment.DoctorId,
+                    AppointmentDate = appointment.AppointmentDate,
+                    Status = appointment.Status,
+                    Symptoms = appointment.Symptoms
+                };
+
+            return Ok(appointmentDto);
         }
 
         [Authorize(Roles = "Admin,Reception")]
