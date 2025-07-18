@@ -1,11 +1,13 @@
-﻿using MedicalSystem.Infrastructure;
+﻿using MedicalSystem.API.Extensions;
+using MedicalSystem.API.Services;
 using MedicalSystem.Application;
+using MedicalSystem.Domain.Entities;
+using MedicalSystem.Infrastructure;
+using MedicalSystem.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using MedicalSystem.Domain.Entities;
-using MedicalSystem.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using MedicalSystem.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,42 +16,50 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddControllers();
 
-var jwtKey = builder.Configuration["Jwt:Key"];
-var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+//var jwtKey = builder.Configuration["Jwt:Key"];
+//var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
-// Authentication setup
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = "http://localhost:5074"; // Change as needed
-        options.RequireHttpsMetadata = false;
-        options.Audience = "medical_api";
+
+//builder.Services.AddAuthentication("Bearer")
+//    .AddJwtBearer("Bearer", options =>
+//    {
+//        options.Authority = "http://localhost:5074"; // Change as needed
+//options.RequireHttpsMetadata = false;
+//options.Audience = "medical_api";
+//options.TokenValidationParameters = new TokenValidationParameters
+//{
+//    ValidateIssuer = true,
+//    ValidateAudience = true,
+//    ValidateLifetime = true,
+//    ValidateIssuerSigningKey = true,
+
+//    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+//    ValidAudience = builder.Configuration["Jwt:Audience"],
+//    IssuerSigningKey = key
+//};
+//    });
+
+
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options => {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = key 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+builder.Services.AddAuthorization();
 
-//builder.Services.AddAuthorization(options =>
-//{
-//    options.AddPolicy("Patient", policy =>
-//    {
-//        policy.RequireRole("Patient");
-//    });
 
-//    // You may add other roles too for later use
-//    options.AddPolicy("Doctor", policy =>
-//    {
-//        policy.RequireRole("Doctor");
-//    });
-//});
+
+
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerAuth();
@@ -87,13 +97,13 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     var roles = new[] {   "Admin",
-"Doctor",
-"Nurse",
-"Reception",
-"Cashier",
-"Laboratory",
-"ChefDoctor",
-"Patient" };
+                            "Doctor",
+                            "Nurse",
+                            "Reception",
+                            "Cashier",
+                            "Laboratory",
+                            "ChefDoctor",
+                            "Patient" };
 
     foreach (var roleName in roles)
     {

@@ -1,5 +1,7 @@
 
 using MedicalSystem.API.Models.User;
+using MedicalSystem.Application.Models.Requests;
+using MedicalSystem.Domain.Entities;
 using MedicalSystem.Domain.Enums;
 using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
@@ -18,25 +20,9 @@ namespace MedicalSystem.API.Controllers
         public UsersController(AppDbContext db)
         {
             _db = db;
-        }
+        }        
 
-        [HttpGet("doctors")]
-        [Authorize(Roles = "Patient, Admin")]
-        public async Task<IActionResult> GetDoctors()
-        {
-            var doctors = await _db.Users.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Where(u => u.UserRoles.Any(ur => ur.Role.Name == UserRoles.Doctor))
-                                .Select(u => new
-                                {
-                                    u.Id,
-                                    u.Username,
-                                    Role = string.Join(", ", u.UserRoles.Select(ur => ur.Role.Name))
-                                })
-                                .ToListAsync();
-
-            return Ok(doctors);
-        }
-
-        [HttpGet]
+        [HttpGet("list")]
         public async Task<ActionResult<IEnumerable<UserListItem>>> GetAllUsers()
         {
             var users = await _db.Users
@@ -52,6 +38,52 @@ namespace MedicalSystem.API.Controllers
 
             return Ok(users);
         }
+
+        [HttpGet("roles")]
+        public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
+        {
+            var users = await _db.Roles
+                .Select(u => new 
+                {
+                    Id = u.Id,
+                    Name = u.Name                    
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+        [HttpPost("assign-role")]
+        public async Task<IActionResult> RegisterPatient(AssignRoleRequest request)
+        {
+            var user = await _db.Users
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.Id == request.UserId);
+
+            if (user is null)
+                return NotFound("User not found");
+
+            var role = await _db.Roles.FirstOrDefaultAsync(r => r.Name == request.RoleName);
+            if (role == null)
+                return BadRequest("Invalid role");
+
+            if (user.UserRoles != null)
+            {
+                var roleExists = user.UserRoles.FirstOrDefault(f => f.RoleId == role.Id);
+                return BadRequest("Role already exists!");
+            }
+            
+            user.UserRoles.Add(new Domain.Entities.UserRole
+            {
+                UserId = user.Id,
+                RoleId = role.Id
+            });
+
+            await _db.SaveChangesAsync();
+
+            return Ok($"User role updated to {request.RoleName}");
+        }
+
 
         [HttpPut("{id:guid}/role")]
         public async Task<IActionResult> UpdateUserRole(Guid id, [FromBody] UpdateUserRoleRequest request)
@@ -78,6 +110,22 @@ namespace MedicalSystem.API.Controllers
             await _db.SaveChangesAsync();
 
             return Ok($"User role updated to {request.Role}");
+        }
+
+        [HttpGet("doctors")]
+        [Authorize(Roles = "Patient, Admin")]
+        public async Task<IActionResult> GetDoctors()
+        {
+            var doctors = await _db.Users.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Where(u => u.UserRoles.Any(ur => ur.Role.Name == UserRoles.Doctor))
+                                .Select(u => new
+                                {
+                                    u.Id,
+                                    u.Username,
+                                    Role = string.Join(", ", u.UserRoles.Select(ur => ur.Role.Name))
+                                })
+                                .ToListAsync();
+
+            return Ok(doctors);
         }
 
     }

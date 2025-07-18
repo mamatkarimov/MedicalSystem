@@ -156,9 +156,9 @@ namespace MedicalSystem.API.Controllers
                     return Unauthorized("User ID not found or invalid");
 
                 var doctor = await _context.Users
-    .Include(u => u.UserRoles)
-        .ThenInclude(ur => ur.Role)
-    .FirstOrDefaultAsync(u => u.Id == request.DoctorId);
+                                            .Include(u => u.UserRoles)
+                                                .ThenInclude(ur => ur.Role)
+                                            .FirstOrDefaultAsync(u => u.Id == request.DoctorId);
 
                 if (doctor == null || !doctor.UserRoles.Any(r => r.Role.Name == UserRoles.Doctor))
                     return BadRequest("Invalid doctor ID");

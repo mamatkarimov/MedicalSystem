@@ -1,16 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MedicalSystem.Application.Models.Requests;
-using MedicalSystem.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Azure.Core;
+﻿using Azure.Core;
 using MedicalSystem.API.Models.Auth;
+using MedicalSystem.API.Services;
+using MedicalSystem.Application.DTOs;
+using MedicalSystem.Application.Models.Requests;
 using MedicalSystem.Domain.Entities;
 using MedicalSystem.Domain.Enums;
+using MedicalSystem.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace MedicalSystem.API.Controllers;
 
@@ -20,11 +22,13 @@ public class AuthController : ControllerBase
 {
     private readonly AppDbContext _db;
     private readonly IConfiguration _config;
+    private readonly TokenService _tokenService;
 
-    public AuthController(AppDbContext db, IConfiguration config)
+    public AuthController(AppDbContext db, IConfiguration config, TokenService tokenService)
     {
         _db = db;
         _config = config;
+        _tokenService = tokenService;
     }
 
     private async Task<Guid> GetRoleIdAsync(string roleName)
@@ -47,56 +51,38 @@ public class AuthController : ControllerBase
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             return Unauthorized();
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
-        };
+        //var claims = new List<Claim>
+        //{
+        //    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        //    new Claim(ClaimTypes.Name, user.Username)
+        //};
 
-        foreach (var role in user.UserRoles.Select(ur => ur.Role.Name))
-            claims.Add(new Claim(ClaimTypes.Role, role));
+        //foreach (var role in user.UserRoles.Select(ur => ur.Role.Name))
+        //    claims.Add(new Claim(ClaimTypes.Role, role));
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: creds);
+        //var token = new JwtSecurityToken(
+        //    issuer: _config["Jwt:Issuer"],
+        //    audience: _config["Jwt:Audience"],
+        //    claims: claims,
+        //    expires: DateTime.UtcNow.AddHours(1),
+        //    signingCredentials: creds);
 
-        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
-    }
+        //return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
-    {
-        if (await _db.Users.AnyAsync(u => u.Username == request.Username))
-            return BadRequest("Username already taken");
+        //var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+        //if (user == null || user.PasswordHash != request.Password) // Replace with hash compare
+        //    return Unauthorized();
 
-        var role = await _db.Roles.FirstOrDefaultAsync(r => r.Name == request.Role);
-        if (role == null)
-            return BadRequest("Invalid role");
+        //var roles = await _db.UserRoles
+        //    .Where(ur => ur.UserId == user.Id)
+        //    .Select(ur => ur.Role.Name)
+        //    .ToListAsync();
 
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-        var user = new User
-        {
-            Username = request.Username,
-            PasswordHash = hashedPassword,
-            Email = request.Email
-        };
-
-        user.UserRoles.Add(new UserRole
-        {
-            Role = role
-        });
-
-        _db.Users.Add(user);
-        await _db.SaveChangesAsync();
-
-        return Ok(new { user.Id, user.Username, Role = request.Role });
+        var token = _tokenService.CreateToken(user, user.UserRoles.Select(ur => ur.Role.Name).ToList());
+        return Ok(new LoginResponse { Token = token });
     }
 
     [Authorize]
@@ -121,7 +107,7 @@ public class AuthController : ControllerBase
             ? Ok(found)
             : NotFound("User not found");
     }
-
+    
     [HttpPost("register-patient")]
     public async Task<IActionResult> RegisterPatient(RegisterPatientRequest request)
     {
@@ -186,4 +172,34 @@ public class AuthController : ControllerBase
 
         return Ok("Doctor registered successfully");
     }
+
+    //[HttpPost("register")]
+    //public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    //{
+    //    if (await _db.Users.AnyAsync(u => u.Username == request.Username))
+    //        return BadRequest("Username already taken");
+
+    //    var role = await _db.Roles.FirstOrDefaultAsync(r => r.Name == request.Role);
+    //    if (role == null)
+    //        return BadRequest("Invalid role");
+
+    //    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+    //    var user = new User
+    //    {
+    //        Username = request.Username,
+    //        PasswordHash = hashedPassword,
+    //        Email = request.Email
+    //    };
+
+    //    user.UserRoles.Add(new UserRole
+    //    {
+    //        Role = role
+    //    });
+
+    //    _db.Users.Add(user);
+    //    await _db.SaveChangesAsync();
+
+    //    return Ok(new { user.Id, user.Username, Role = request.Role });
+    //}
 }

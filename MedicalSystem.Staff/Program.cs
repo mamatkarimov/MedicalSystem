@@ -1,73 +1,43 @@
-﻿using MedicalSystem.Staff;
-using MedicalSystem.Staff.Auth;
+﻿
+using MedicalSystem.Services;
+using MedicalSystem.Staff.HttpClients;
 using MedicalSystem.Staff.Services;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.Identity.Client.Extensions.Msal;
-using System.Net.Http.Headers;
+using Microsoft.JSInterop;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+//builder.Services.AddSingleton<WeatherForecastService>();
 
-builder.Services.AddHttpClient();
-
+builder.Services.AddScoped<ApiAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<ApiAuthenticationStateProvider>());
+builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-builder.Services.AddScoped<ProtectedLocalStorage>();
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddHttpClient<AuthService>(client => client.BaseAddress = new Uri("http://localhost:5074/"));
 
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddHttpClient<AuthService>(options =>
+builder.Services.AddScoped(sp =>
 {
-    options.BaseAddress = new Uri("http://localhost:5074/");
+    var js = sp.GetRequiredService<IJSRuntime>();
+    var handler = new AuthorizationMessageHandler(js);
+    return new HttpClient(handler)
+    {
+        BaseAddress = new Uri("http//localhost:5074/") // твой WebAPI URL
+    };
 });
 
-//builder.Services.AddHttpClient("AuthHttpClient", client =>
-//{
-//    client.BaseAddress = new Uri("http://localhost:5074");
-//}).AddHttpMessageHandler<HttpInterceptor>();
-
-
-//builder.Services.AddScoped(sp =>
-//    sp.GetRequiredService<IHttpClientFactory>().CreateClient("AuthHttpClient"));
-
-//builder.Services.AddScoped(sp =>
-//{
-//    var client = new HttpClient
-//    {
-//        BaseAddress = new Uri("http://localhost:5074") // adjust as needed
-//    };
-
-//    var storage = sp.GetRequiredService<SecureStorageService>();
-//    var token = storage.GetTokenAsync().GetAwaiter().GetResult();
-    
-//    if (!string.IsNullOrEmpty(token))
-//        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-//    return client;
-//});
-
-builder.Services.AddSession();
-
-// Build the app
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
 }
 
-app.UseSession();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
